@@ -1,22 +1,35 @@
 //game main
-var loadLevel = function(n) {
+const loadLevel = function(n) {
     n = n - 1
     let brick = []
     let level = levels[n]
     for (let i = 0; i < level.length; i++) {
         let p = level[i]
-        let b = new Brick(p[0], p[1])
+        let b = new Brick(p)
         brick.push(b)
     }
     return brick
+}
+const range = document.querySelector('#range')
+const fps = document.querySelector('#fps')
+const initText = function(x) {
+    fps.innerHTML = x + ' fps'
 }
 
 const _main = () => {
     let level = 1
     let board = new Board(100, 450)
     let ball = new Ball(175, 425)
-    let game = new Rgame(60)
+    let game = new Rgame()
     let brick = loadLevel(level)
+    range.value = game.fps
+    initText(range.value)
+    range.addEventListener('input', (e) => {
+        let input = e.target
+        let fps = Number(input.value) || 1
+        game.setFps(fps)
+        initText(fps)
+    });
     //left
     game.registerAction('a', () => {
         if (!game.flag) {
@@ -41,8 +54,12 @@ const _main = () => {
         ball.fire()
     })
     window.addEventListener('keydown', (e) => {
-        if (e.key == 'Enter') {
+        let k = e.key
+        if (k == 'Enter') {
             game.start()
+        } else if ('123456'.includes(k)) {
+            level = Number(k)
+            brick = loadLevel(level)
         }
     })
     game.update = () => {
@@ -56,9 +73,11 @@ const _main = () => {
         }
         for (var i = 0; i < brick.length; i++) {
             if (brick[i].collide(ball)) {
-                game.addScore()
                 brick[i].kill()
                 ball.bounce()
+                if (!brick[i].alive) {
+                    game.addScore()
+                }
             }
         }
         if (ball.y > 500) {
@@ -74,7 +93,7 @@ const _main = () => {
                 alert('You Win')
                 level = 1
             }
-            alert('Your score : ' + game.score+'go on '+level)
+            alert('Your score : ' + game.score + 'go on ' + level)
             brick = loadLevel(level)
         }
     }

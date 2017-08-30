@@ -1,6 +1,6 @@
 //defined game
 class Rgame {
-    constructor(fps) {
+    constructor() {
         const canvas = document.querySelector('#game')
         const ctx = canvas.getContext('2d')
         this.canvas = canvas
@@ -9,7 +9,7 @@ class Rgame {
         this.score = 0
         this.actions = {}
         this.keydowns = {}
-        this.fps = fps
+        this.fps = 60
         //events
         window.addEventListener('keydown', (e) => {
             this.keydowns[e.key] = true
@@ -18,22 +18,32 @@ class Rgame {
             this.keydowns[e.key] = false
         })
         //timer
-        this.timer = setInterval(() => {
-            //events
-            let actions = Object.keys(this.actions)
-            for (let i = 0; i < actions.length; i++) {
-                let key = actions[i]
-                if (this.keydowns[key]) {
-                    this.actions[key]()
-                }
-            }
-            //updata
-            this.update()
-            //clear
-            this.clear()
-            //draw
-            this.draw()
+        this.timer = setTimeout(() => {
+            this.runloop()
         }, 1000 / this.fps)
+    }
+    runloop(){
+        //events
+        let actions = Object.keys(this.actions)
+        for (let i = 0; i < actions.length; i++) {
+            let key = actions[i]
+            if (this.keydowns[key]) {
+                this.actions[key]()
+            }
+        }
+        //updata
+        this.update()
+        //clear
+        this.clear()
+        //draw
+        this.draw()
+
+        this.timer = setTimeout(() => {
+            this.runloop()
+        }, 1000 / this.fps)
+    }
+    setFps(fps){
+        this.fps = fps
     }
     //register action
     registerAction(key, callback) {
