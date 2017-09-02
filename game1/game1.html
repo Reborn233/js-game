@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+<meta charset="UTF-8">
 <head>
     <title>game1</title>
 </head>
@@ -8,6 +8,11 @@
     html, body {
         padding: 0;
         margin: 0;
+    }
+
+    .container {
+        padding: 10px;
+        width: 500px;
     }
 
     #game {
@@ -18,17 +23,19 @@
 </style>
 
 <body>
-<canvas id="game" width="375" height="500"></canvas>
-<hr/>
-<input id='range' type="range" value="1" title="range"/>
-<div id='fps'></div>
-
+<div class="container">
+    <canvas id="game" width="375" height="500"></canvas>
+    <hr/>
+    <input id='range' type="range" value="1" title="range"/>
+    <div id='fps'></div>
+    <textarea readonly name="input-log" id="input-log" cols="60" rows="10"></textarea>
+</div>
+</body>
+</html>
 <script src="./js/level.js"></script>
 <script src="./js/utils.js"></script>
+<script src="js/rgame.js"></script>
 <script src="./js/board.js"></script>
 <script src="./js/ball.js"></script>
 <script src="./js/brick.js"></script>
-<script src="./js/Rgame.js"></script>
 <script src="./js/main.js"></script>
-</body>
-</html>

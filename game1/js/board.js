@@ -1,11 +1,14 @@
 // defined board
 class Board {
-    constructor(x, y) {
-        const image = imageFromPath('images/board.png')
+    constructor(x, y, game) {
+        console.log(this)
+        const image = game.imageByName('board')
         this.speed = 15
         this.x = x
         this.y = y
-        this.image = image
+        this.image = image.image
+        this.w = image.w
+        this.h = image.h
     }
 
     move(x) {
@@ -19,6 +22,7 @@ class Board {
     moveRight() {
         this.move(this.x + this.speed)
     }
+
     init() {
         this.x = 100
         this.y = 450

@@ -1,27 +1,32 @@
 //game main
-const loadLevel = function(n) {
+const loadLevel = function (n,m) {
     n = n - 1
     let brick = []
     let level = levels[n]
     for (let i = 0; i < level.length; i++) {
         let p = level[i]
-        let b = new Brick(p)
+        let b = new Brick(p,m)
         brick.push(b)
     }
     return brick
 }
 const range = document.querySelector('#range')
 const fps = document.querySelector('#fps')
-const initText = function(x) {
+const initText = function (x) {
     fps.innerHTML = x + ' fps'
 }
 
 const _main = () => {
     let level = 1
-    let board = new Board(100, 450)
-    let ball = new Ball(175, 425)
-    let game = new Rgame()
-    let brick = loadLevel(level)
+    const images = {
+        ball: 'images/ball.png',
+        board: 'images/board.png',
+        brick: 'images/brick.png',
+    }
+    let game = new rgame(images)
+    let board = new Board(100, 450,game)
+    let ball = new Ball(175, 425,game)
+    let brick = loadLevel(level,game)
     range.value = game.fps
     initText(range.value)
     range.addEventListener('input', (e) => {
@@ -81,25 +86,23 @@ const _main = () => {
             }
         }
         if (ball.y > 500) {
-            alert('Your score : ' + game.score)
             game.end(board, ball)
             level = 1
-            brick = loadLevel(level)
+            brick = loadLevel(level,game)
         }
-        if (game.score == brick.length) {
+        let isOver = brick.every((key) => {
+            return key.alive == false
+        })
+        if (isOver) {
             game.end(board, ball)
             level++
-            if (level > levels.length) {
-                alert('You Win')
-                level = 1
-            }
-            alert('Your score : ' + game.score + 'go on ' + level)
-            brick = loadLevel(level)
+            brick = loadLevel(level,game)
         }
     }
     game.draw = () => {
         game.drawImage(board)
         game.drawImage(ball)
+        game.drawText('得分: ' + game.score, 10, 450)
         if (!game.flag) {
             game.drawScreen()
             game.drawText('press Enter game', 10, 250, 42)

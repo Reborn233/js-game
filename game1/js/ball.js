@@ -1,13 +1,15 @@
 // defined ball
 class Ball {
-    constructor(x, y) {
-        const image = imageFromPath('images/ball.png')
+    constructor(x, y,game) {
+        const  image = game.imageByName('ball')
         this.fired = false
         this.x = x
         this.y = y
         this.speedX = 6
         this.speedY = 6
-        this.image = image
+        this.image = image.image
+        this.w = image.w
+        this.h = image.h
     }
 
     move() {

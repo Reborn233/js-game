@@ -1,4 +1,12 @@
-const log = console.log.bind(console)
+// const log = console.log.bind(console)
+
+const el = (sel) => {
+    return document.querySelector(sel)
+}
+const log = (s) => {
+    el('#input-log').value += '\n' + s
+}
+
 //collision test 1
 function rectIntersects(a, b) {
     var o = a
@@ -9,6 +17,7 @@ function rectIntersects(a, b) {
     }
     return false
 }
+
 //collision test 2
 function isIntersect(a, b) {
     if (a.y > b.y + b.image.height || a.y + a.image.height < b.y || a.x + a.image.width < b.x || a.x > b.x + b.image.height) {
@@ -22,6 +31,7 @@ function imageFromPath(path) {
     img.src = path
     return img
 }
+
 
 function mulitDraw(num, image) {
     let res = [],
@@ -38,12 +48,3 @@ function mulitDraw(num, image) {
     }
     return res
 }
-
-// common class
-// class ele {
-//     constructor(x, y, image) {
-//         this.x = x
-//         this.y = y
-//         this.image = image
-//     }
-// }
