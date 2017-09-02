@@ -3,21 +3,32 @@
 
 <head>
     <title>game1</title>
-    <link rel="stylesheet" href="./css/style.css">
 </head>
+<style>
+    html, body {
+        padding: 0;
+        margin: 0;
+    }
+
+    #game {
+        border: 1px solid #ccc;
+        margin: 10px;
+        padding: 0;
+    }
+</style>
 
 <body>
-    <canvas id="game" width="375" height="500"></canvas>
-    <hr />
-    <input id='range' type="range" value="1">
-    <div id='fps'></div>
-	
-	<script src="./js/level.js"></script>
-	<script src="./js/utils.js"></script>
-	<script src="./js/board.js"></script>
-	<script src="./js/ball.js"></script>
-	<script src="./js/brick.js"></script>
-	<script src="./js/Rgame.js"></script>
-	<script src="./js/main.js"></script>
+<canvas id="game" width="375" height="500"></canvas>
+<hr/>
+<input id='range' type="range" value="1" title="range"/>
+<div id='fps'></div>
+
+<script src="./js/level.js"></script>
+<script src="./js/utils.js"></script>
+<script src="./js/board.js"></script>
+<script src="./js/ball.js"></script>
+<script src="./js/brick.js"></script>
+<script src="./js/Rgame.js"></script>
+<script src="./js/main.js"></script>
 </body>
 </html>
