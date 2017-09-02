@@ -21,6 +21,7 @@ class rgame {
         let loads = []
         let names = Object.keys(image)
         //load all image
+        log('正在加载游戏资源...')
         for (let i = 0; i < names.length; i++) {
             let name = names[i]
             let path = image[name]
@@ -31,6 +32,7 @@ class rgame {
                 loads.push(1)
                 // console.log('load images')
                 if (loads.length == names.length) {
+                    log('游戏资源加载完毕!')
                     callback(this)
                     this.run()
                 }

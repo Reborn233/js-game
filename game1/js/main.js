@@ -86,6 +86,7 @@ const _main = () => {
                 }
             }
             if (ball.y > 500) {
+                log('game over')
                 game.end(board, ball)
                 level = 1
                 brick = loadLevel(level, game)
@@ -94,9 +95,17 @@ const _main = () => {
                 return key.alive == false
             })
             if (isOver) {
+                log('进入下一关')
                 game.end(board, ball)
                 level++
-                brick = loadLevel(level, game)
+                if(level>6){
+                    log('恭喜你 通关了')
+                    game.end(board, ball)
+                    level = 1
+                    brick = loadLevel(level, game)
+                }else{
+                    brick = loadLevel(level, game)
+                }
             }
         }
         game.draw = () => {
