@@ -26,9 +26,8 @@ class rgame {
             let path = image[name]
             let img = new Image()
             img.src = path
-            this.images[name] = img
             img.onload = () => {
-
+                this.images[name] = img
                 loads.push(1)
                 if (loads.length == names.length) {
                     this.run()
