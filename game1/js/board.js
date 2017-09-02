@@ -2,6 +2,7 @@
 class Board {
     constructor(x, y, game) {
         const image = game.imageByName('board')
+        // console.log(image)
         this.speed = 15
         this.x = x
         this.y = y

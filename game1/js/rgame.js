@@ -1,6 +1,6 @@
 //defined game
 class rgame {
-    constructor(image) {
+    constructor(image,callback) {
         const canvas = document.querySelector('#game')
         const ctx = canvas.getContext('2d')
         this.canvas = canvas
@@ -29,7 +29,9 @@ class rgame {
             img.onload = () => {
                 this.images[name] = img
                 loads.push(1)
+                // console.log('load images')
                 if (loads.length == names.length) {
+                    callback(this)
                     this.run()
                 }
             }
