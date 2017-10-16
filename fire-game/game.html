@@ -1,0 +1,162 @@
+<script>
+px = py = 100
+pd = 30
+ps = 10
+
+el = []
+ed = 25
+es = 5
+
+sl = []
+sd = 4
+ss = 7
+
+pause = false
+
+score = 0
+
+u = {
+    actions: {},
+    keydowns: {},
+    registerAction(key, callback) {
+        this.actions[key] = callback
+    }
+}
+
+function isIntersect(x1, y1, s1, x2, y2, s2) {
+    if (x1 + s1 < x2 || x2 + s2 < x1 || y2 + s2 < y1 || y1 + s1 < y2) {
+        return false
+    }
+    return true
+}
+
+window.onload = function() {
+    canvas = document.createElement('canvas')
+    canvas.width = 640
+    canvas.height = 480
+    document.body.appendChild(canvas)
+
+    ctx = canvas.getContext('2d')
+
+    setInterval(update, 1000 / 60)
+    setInterval(spawn, 2000)
+    setInterval(keyPush, 1000 / 60)
+    window.addEventListener('keydown', function(e) {
+        u.keydowns[e.key] = true
+    })
+    window.addEventListener('keyup', function(e) {
+        u.keydowns[e.key] = false
+    })
+
+    window.addEventListener('keydown', function(e) {
+        if (e.key == ' ') {
+            pause = !pause
+        }
+    })
+}
+
+function spawn() {
+    el.push({ x: canvas.width, y: Math.random() * canvas.height })
+}
+
+function update() {
+    if (pause) {
+        return
+    }
+    ctx.fillStyle = 'black'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    ctx.fillStyle = 'white'
+    ctx.fillRect(px, py, pd, pd)
+
+    ctx.fillStyle = 'white'
+    var txt = '击中目标: ' + score
+    ctx.fillText(txt, 20, 30)
+
+    ctx.fillStyle = 'yellow'
+    for (var s = 0; s < sl.length; s++) {
+        sl[s].x += ss
+        ctx.fillRect(sl[s].x, sl[s].y, sd, sd)
+        for (var e = el.length - 1; e >= 0; e--) {
+            if (isIntersect(sl[s].x, sl[s].y, sd, el[e].x, el[e].y, ed)) {
+                console.log('isIntersect')
+                el.splice(e, 1)
+                score++
+            }
+        }
+        if (sl[s].x > canvas.width) {
+            sl.splice(s, 1)
+        }
+    }
+
+    ctx.fillStyle = 'blue'
+    for (var e = 0; e < el.length; e++) {
+        el[e].x -= es
+        ctx.fillRect(el[e].x, el[e].y, ed, ed)
+        if (isIntersect(el[e].x, el[e].y, ed, px, py, pd)) {
+            console.log('isIntersect')
+            sl = []
+            el = []
+            px = py = 100
+            score = 0
+            break
+        }
+    }
+}
+
+function keyPush() {
+    var actions = Object.keys(u.actions)
+    for (var i = 0; i < actions.length; i++) {
+        var key = actions[i]
+        if (u.keydowns[key]) {
+            u.actions[key]()
+        }
+    }
+    u.registerAction('j', function() {
+        if (pause) {
+            return
+        }
+        sl.push({ x: px + pd, y: py + pd / 2 })
+    })
+    u.registerAction('w', function() {
+        if (pause) {
+            return
+        }
+        if (py <= 0) {
+            py = 0
+        } else {
+            py -= ps
+        }
+    })
+    u.registerAction('s', function() {
+        if (pause) {
+            return
+        }
+        if (py >= canvas.height - pd) {
+            py = canvas.height - pd
+        } else {
+            py += ps
+        }
+    })
+    u.registerAction('a', function() {
+        if (pause) {
+            return
+        }
+        if (px <= 0) {
+            px = 0
+        } else {
+            px -= ps
+        }
+    })
+    u.registerAction('d', function() {
+        if (pause) {
+            return
+        }
+        if (px >= canvas.width - pd) {
+            px = canvas.width - pd
+        } else {
+            px += ps
+        }
+    })
+}
+</script>
