@@ -1,5 +1,6 @@
 <script>
-px = py = 100
+px = 100
+py = 300
 pd = 30
 ps = 10
 
@@ -18,29 +19,26 @@ score = 0
 u = {
     actions: {},
     keydowns: {},
-    registerAction(key, callback) {
+    registerAction: function(key, callback) {
         this.actions[key] = callback
     }
 }
 
-function isIntersect(x1, y1, s1, x2, y2, s2) {
-    if (x1 + s1 < x2 || x2 + s2 < x1 || y2 + s2 < y1 || y1 + s1 < y2) {
-        return false
-    }
-    return true
-}
-
 window.onload = function() {
-    canvas = document.createElement('canvas')
-    canvas.width = 640
-    canvas.height = 480
-    document.body.appendChild(canvas)
 
+    canvas = document.createElement('canvas')
+    canvas.with = 320
+    canvas.height = 480
     ctx = canvas.getContext('2d')
 
-    setInterval(update, 1000 / 60)
-    setInterval(spawn, 2000)
-    setInterval(keyPush, 1000 / 60)
+    document.body.appendChild(canvas)
+
+    window.addEventListener('keydown', function(e) {
+        if (e.key == ' ') {
+            pause = !pasue
+        }
+    })
+
     window.addEventListener('keydown', function(e) {
         u.keydowns[e.key] = true
     })
@@ -48,21 +46,30 @@ window.onload = function() {
         u.keydowns[e.key] = false
     })
 
-    window.addEventListener('keydown', function(e) {
-        if (e.key == ' ') {
-            pause = !pause
-        }
-    })
+    setInterval(update, 1000 / 60)
+    setInterval(spawn, 2000)
+    setInterval(keyPush, 1000 / 60)
+}
+
+function isCollide(x1, y1, s1, x2, y2, s2) {
+    if (x1 + s1 < x2 || y1 + s1 < y2 || x2 + s2 < x1 || y2 + s2 < y1) {
+        return false
+    }
+    return true
 }
 
 function spawn() {
-    el.push({ x: canvas.width, y: Math.random() * canvas.height })
+    el.push({
+        x: Math.random() * canvas.width,
+        y: -ed
+    })
 }
 
 function update() {
     if (pause) {
         return
     }
+
     ctx.fillStyle = 'black'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -73,35 +80,42 @@ function update() {
     var txt = '击中目标: ' + score
     ctx.fillText(txt, 20, 30)
 
-    ctx.fillStyle = 'yellow'
+    ctx.fillStyle = 'red'
     for (var s = 0; s < sl.length; s++) {
-        sl[s].x += ss
+        sl[s].y -= ss
         ctx.fillRect(sl[s].x, sl[s].y, sd, sd)
         for (var e = el.length - 1; e >= 0; e--) {
-            if (isIntersect(sl[s].x, sl[s].y, sd, el[e].x, el[e].y, ed)) {
-                console.log('isIntersect')
+            if (isCollide(el[e].x, el[e].y, ed, sl[s].x, sl[s].y, sd)) {
                 el.splice(e, 1)
                 score++
             }
         }
-        if (sl[s].x > canvas.width) {
+        if (sl[s].y < -sd) {
             sl.splice(s, 1)
         }
     }
 
-    ctx.fillStyle = 'blue'
+    ctx.fillStyle = 'yellow'
     for (var e = 0; e < el.length; e++) {
-        el[e].x -= es
+        el[e].y += es
         ctx.fillRect(el[e].x, el[e].y, ed, ed)
-        if (isIntersect(el[e].x, el[e].y, ed, px, py, pd)) {
-            console.log('isIntersect')
-            sl = []
-            el = []
-            px = py = 100
-            score = 0
+        if (isCollide(el[e].x, el[e].y, ed, px, py, pd)) {
+            reset()
             break
         }
+        if (el[e].y >= canvas.height) {
+            el.splice(e, 1)
+        }
     }
+
+}
+
+function reset() {
+    px = 100
+    py = 300
+    sl = []
+    el = []
+    score = 0
 }
 
 function keyPush() {
@@ -112,11 +126,18 @@ function keyPush() {
             u.actions[key]()
         }
     }
+
     u.registerAction('j', function() {
         if (pause) {
             return
         }
-        sl.push({ x: px + pd, y: py + pd / 2 })
+        if (sl.length > 10) {
+            return
+        }
+        sl.push({
+            x: px + pd / 2 - sd / 2,
+            y: py
+        })
     })
     u.registerAction('w', function() {
         if (pause) {
