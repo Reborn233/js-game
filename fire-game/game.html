@@ -6,16 +6,18 @@ ps = 5
 
 el = []
 ed = 25
-es = 2
+es = 3
 
 sl = []
 sd = 4
 ss = 7
 
+bl = []
+bd = 5
 pause = false
-
 score = 0
-
+isHit = false
+x = y = 0
 u = {
     actions: {},
     keydowns: {},
@@ -23,7 +25,6 @@ u = {
         this.actions[key] = callback
     }
 }
-
 window.onload = function() {
 
     canvas = document.createElement('canvas')
@@ -45,19 +46,27 @@ window.onload = function() {
     window.addEventListener('keyup', function(e) {
         u.keydowns[e.key] = false
     })
-
     setInterval(update, 1000 / 60)
     setInterval(spawn, 2000)
     setInterval(keyPush, 1000 / 60)
 }
-
 function isCollide(x1, y1, s1, x2, y2, s2) {
     if (x1 + s1 < x2 || y1 + s1 < y2 || x2 + s2 < x1 || y2 + s2 < y1) {
         return false
     }
     return true
 }
-
+function boom(x = 120, y = 240) {
+    let n = Math.ceil(Math.random() * 30) + 50
+    for (var i = 0; i < n; i++) {
+        bl.push({
+            x: x,
+            y: y,
+            sx: (Math.random() * 3 - 1) * 5,
+            sy: (Math.random() * 3 - 1) * 5,
+        })
+    }
+}
 function spawn() {
     if (pause) {
         return
@@ -67,11 +76,25 @@ function spawn() {
         y: -ed
     })
 }
-
+function render() {
+    if (!isHit) {
+        return
+    }
+    for (var i = 0; i < bl.length; i++) {
+        ctx.fillStyle = getColor()
+        bl[i].x += bl[i].sx
+        bl[i].y += bl[i].sy
+        ctx.fillRect(bl[i].x, bl[i].y, bd, bd)
+        if (bl[i].x < x - 50 || bl[i].x > x + 50 || bl[i].y < y - 50 || bl[i].y > y + 50) {
+            bl.splice(i, 1)
+        }
+    }
+}
 function update() {
     if (pause) {
         return
     }
+
 
     ctx.fillStyle = 'black'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -89,7 +112,16 @@ function update() {
         ctx.fillRect(sl[s].x, sl[s].y, sd, sd)
         for (var e = el.length - 1; e >= 0; e--) {
             if (isCollide(el[e].x, el[e].y, ed, sl[s].x, sl[s].y, sd)) {
+                x = el[e].x
+                y = el[e].y
+                boom()
+                bl.forEach(function(item) {
+                    item.x = x + ed / 2
+                    item.y = y + ed / 2
+                })
+                isHit = true
                 el.splice(e, 1)
+                sl.splice(s, 1)
                 score++
             }
         }
@@ -97,6 +129,9 @@ function update() {
             sl.splice(s, 1)
         }
     }
+
+    render()
+
     ctx.fillStyle = 'yellow'
     for (var e = 0; e < el.length; e++) {
         el[e].y += es
@@ -109,9 +144,11 @@ function update() {
             el.splice(e, 1)
         }
     }
-
 }
+function getColor() {
 
+    return '#' + Math.floor(Math.random() * (2 << 23)).toString(16)
+}
 function reset() {
     px = 100
     py = 300
@@ -119,7 +156,6 @@ function reset() {
     el = []
     score = 0
 }
-
 function keyPush() {
     var actions = Object.keys(u.actions)
     for (var i = 0; i < actions.length; i++) {
