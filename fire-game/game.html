@@ -1,12 +1,12 @@
 <script>
 px = 100
-py = 300
+py = 400
 pd = 30
-ps = 10
+ps = 5
 
 el = []
 ed = 25
-es = 5
+es = 2
 
 sl = []
 sd = 4
@@ -35,7 +35,7 @@ window.onload = function() {
 
     window.addEventListener('keydown', function(e) {
         if (e.key == ' ') {
-            pause = !pasue
+            pause = !pause
         }
     })
 
@@ -59,6 +59,9 @@ function isCollide(x1, y1, s1, x2, y2, s2) {
 }
 
 function spawn() {
+    if (pause) {
+        return
+    }
     el.push({
         x: Math.random() * canvas.width,
         y: -ed
@@ -94,7 +97,6 @@ function update() {
             sl.splice(s, 1)
         }
     }
-
     ctx.fillStyle = 'yellow'
     for (var e = 0; e < el.length; e++) {
         el[e].y += es
