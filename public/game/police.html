@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>射击</title>
+</head>
+<style>
+* {
+    padding: 0;
+    margin: 0;
+}
+
+canvas {
+    touch-action: none;
+    cursor: inherit;
+}
+</style>
+
+<body>
+    <canvas id='canvas'>您的浏览器不支持Canvas</canvas>
+</body>
+
+</html>
+<script src="./r.js"></script>
+<script>
+class Canvas {
+    constructor() {
+        const canvas = document.querySelector('#canvas')
+        canvas.width = 640
+        canvas.height = 320
+        const ctx = canvas.getContext('2d')
+        this.canvas = canvas
+        this.ctx = ctx
+        this.bw = canvas.width
+        this.bh = canvas.height
+    }
+
+    draw() {
+        this.ctx.fillStyle = '#000'
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+    }
+}
+class Game extends Canvas {
+    constructor() {
+        super()
+        this.actions = {}
+        this.keydowns = {}
+        //events
+        window.addEventListener('keydown', (e) => {
+            this.keydowns[e.key] = true
+        })
+        window.addEventListener('keyup', (e) => {
+            this.keydowns[e.key] = false
+        })
+
+        this.run()
+    }
+
+    run() {
+        setTimeout(() => {
+            this.runloop()
+        }, 1000 / 60)
+    }
+
+    runloop() {
+        let actions = Object.keys(this.actions)
+        for (let i = 0; i < actions.length; i++) {
+            let key = actions[i]
+            if (this.keydowns[key]) {
+                this.actions[key]()
+            }
+        }
+        this.update()
+
+        // this.clear()
+
+        this.draw()
+
+        setTimeout(() => {
+            this.runloop()
+        }, 1000 / 60)
+    }
+
+    //register action
+    registerAction(key, callback) {
+        this.actions[key] = callback
+    }
+
+    clear() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    }
+}
+class Element extends Canvas {
+    constructor(obj) {
+        super()
+        this.x = obj.x || randomNum(10, 50)
+        this.y = obj.y || randomNum(10, 50)
+        this.speedX = obj.speedX || randomNum(2, 5)
+        this.speedY = obj.speedY || randomNum(2, 5)
+        this.image = obj.image
+        this.width = obj.image.width
+        this.height = obj.image.height
+    }
+
+    draw() {
+        this.ctx.drawImage(this.image, this.x, this.y)
+    }
+
+    move(e) {
+        switch (e) {
+            case 'left':
+                if (this.x <= 0) {
+                    this.x = 0
+                } else {
+                    this.x -= this.speedX
+                }
+                break;
+            case 'right':
+                if (this.x >= this.bw - this.width) {
+                    this.x = this.bw - this.width
+                } else {
+                    this.x += this.speedX
+                }
+                break;
+        }
+    }
+
+    jump(){
+    	if(this.y<=this.bh - this.height -10){
+    		this.speedY*=.9
+    	}else{
+			this.y+=this.speedY
+    	}
+    }
+}
+const _main = async() => {
+    let images = {
+        police1_l: './image/police1_l.png',
+        police1_r: './image/police1_r.png',
+        police2_l: './image/police2_l.png',
+        police2_r: './image/police2_r.png',
+
+    }
+    log('正在加载资源...')
+    await loadImage(images)
+        .then((res) => {
+            log('加载资源完成')
+            start(res)
+        })
+}
+const start = (res) => {
+    const canvas = new Canvas()
+    let oPolice1_r = {
+        x: 5,
+        y: canvas.bh - res.police1_r.height,
+        speedX: 5,
+        speedY: 5,
+        image: res.police1_r
+    }
+    const game = new Game()
+    const police1_r = new Element(oPolice1_r)
+
+    game.registerAction('j', () => {
+        log('j')
+    })
+    game.registerAction('w', () => {
+        police1_r.jump()
+    })
+    game.registerAction('s', () => {
+        
+    })
+    game.registerAction('a', () => {
+        police1_r.move('left')
+    })
+    game.registerAction('d', () => {
+        police1_r.move('right')
+    })
+
+    game.update = () => {
+
+    }
+
+    game.draw = () => {
+        canvas.draw()
+        police1_r.draw()
+    }
+}
+_main()
+</script>
