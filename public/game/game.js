@@ -1,4 +1,4 @@
-const type = "WebGL"
+let type = "WebGL"
 
 if (!PIXI.utils.isWebGLSupported()) {
     type = "canvas"

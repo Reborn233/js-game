@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>game</title>
+    <script src="./r.js"></script>
+    <script src="./game.js"></script>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    const game = new Game(480, 320, {
+        preload: preload,
+        update: update,
+        create: create
+    })
+    game.preload()
+
+    function preload() {
+        log('加载资源')
+        let img = {
+            police_r1: './images/right1.png',
+            police_r2: './images/right2.png',
+            police_r3: './images/right3.png',
+            police_r4: './images/right4.png',
+            police_l1: './images/left1.png',
+            police_l2: './images/left2.png',
+            police_l3: './images/left3.png',
+            police_l4: './images/left4.png'
+        }
+        this.preloadImage(img)
+    }
+
+    function create(res) {
+        let oPolice = {
+            x: 0,
+            y: canvas.height - res.police_r1.height,
+            image: {
+                right: [res.police_r1, res.police_r2, res.police_r3, res.police_r4],
+                left: [res.police_l1, res.police_l2, res.police_l3, res.police_l4]
+            },
+            name: 'police'
+        }
+        this.addSprite(oPolice)
+        this.sprites['police'].move = move
+        this.sprites['police'].change()
+        this.registerAction('a', () => {
+            this.sprites['police'].move('left')
+            this.sprites['police'].isMove = true
+        })
+        this.registerAction('d', () => {
+            this.sprites['police'].move('right')
+            this.sprites['police'].isMove = true
+        })
+        window.addEventListener('keyup', (e) => {
+            switch (e.key) {
+                case 'd':
+                    this.sprites['police'].isMove = false
+                    break
+                case 'a':
+                    this.sprites['police'].isMove = false
+                    break
+            }
+        })
+    }
+
+    function update() {
+    }
+
+    function move(direction) {
+        this.direction = direction
+        switch (direction) {
+            case 'left':
+                if (this.x <= -20) {
+                    this.x = -20
+                } else {
+                    this.x -= this.speedX
+                }
+                break
+            case 'right':
+                if (this.x >= canvas.width - this.width + 20) {
+                    this.x = canvas.width - this.width + 20
+                } else {
+                    this.x += this.speedX
+                }
+                break
+        }
+    }
+</script>
