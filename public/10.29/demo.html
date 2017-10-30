@@ -24,15 +24,19 @@
     //预加载资源
     function preload() {
         log('加载资源')
-        this.preloadImage('./images/police.png')
+        let img = {
+            image:'./images/police.png',
+            bg:'./images/bg.png'
+        }
+        this.preloadImage(img)
     }
 
-    let id, police, bullet, bullets = [], boss = []
-
+    let bg, id, police, bullet, bullets = [], boss = []
+    let bgh = 70
     //创建元素
     function create(res) {
         id = getJson(texture)
-
+        bg = res.bg
         /* ---------------- 人物 ------------------------*/
         id['right1.png'].name = 'police'
         id['right1.png'].image = res.image
@@ -41,7 +45,7 @@
         this.addChild(police)
         //设置police位置
         police.x = 0
-        police.y = canvas.height - police.height
+        police.y = canvas.height - police.height - bgh
         police.isJump = false
         police.isDown = true
         //重写police绘制
@@ -114,13 +118,13 @@
         //police 跳跃事件
         police.jump = function () {
             this.speedY += 10 / 20
-            if (this.y >= canvas.height - this.height) {
+            if (this.y >= canvas.height - this.height - bgh) {
                 this.speedY = 0
-                this.y = canvas.height - this.height
+                this.y = canvas.height - this.height - bgh
                 this.isDown = true
                 this.isJump = false
             }
-            if (this.y < canvas.height - this.height) {
+            if (this.y < canvas.height - this.height - bgh) {
                 this.isDown = false
                 this.isJump = true
             } else {
@@ -130,6 +134,8 @@
             this.y += this.speedY
         }
         police.animate()
+
+
 
         /* ------------------- 子弹 ---------------------*/
         id['bullet.png'].name = 'bullet'
@@ -154,7 +160,12 @@
                 bullet.y = b.y
                 bullet.add()
                 if(isCollide(bullet,boss[0])){
-                    boss[0].x +=5
+                    if(b.direction === 'right'){
+                        boss[0].x +=5
+                    }else{
+                        boss[0].x -=5
+                    }
+                    bullets.splice(index, 1)
                 }
                 if (bullet.x >= canvas.width - bullet.width || bullet.x <= 0) {
                     bullets.splice(index, 1)
@@ -163,18 +174,18 @@
         }
 
         /* ------------------- boss -----------------------*/
-        id['wq.png'].name = 'wq'
-        id['wq.png'].image = res.image
-        //实例化子弹
-        let wq = new Sprite(id['wq.png'])
+        id['yt.png'].name = 'wq'
+        id['yt.png'].image = res.image
+        //实例化monster
+        let wq = new Sprite(id['yt.png'])
         wq.x = canvas.width - wq.width
-        wq.y = canvas.height - wq.height -10
+        wq.y = canvas.height - wq.height -bgh
         wq.move = function () {
             this.x += this.speedX
 
             let isHitWall = contain(wq, {
                 x: 0,
-                y: 320 - 48,
+                y: 320 - 48-bgh,
                 width: 480,
                 height: 50
             })
@@ -191,7 +202,6 @@
         }
         this.addChild(wq)
         boss.push(wq)
-        //子弹射击速度
         wq.speedX = .3
 
 

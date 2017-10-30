@@ -23,9 +23,9 @@ const getRcolor = res => { Math.floor(Math.random() * (2 << 3)).toString(16) }
 //简单碰撞检测
 const isCollide = (sprite1, sprite2) => {
     if (sprite1.x + sprite1.width < sprite2.x ||
-        sprite1.y + sprite1.height < sprite2.height ||
+        sprite1.y + sprite1.height < sprite2.y ||
         sprite2.x + sprite2.width < sprite1.x ||
-        sprite2.y + sprite2.height < sprite1.height) {
+        sprite2.y + sprite2.height < sprite1.y) {
         return false
     }
     return true

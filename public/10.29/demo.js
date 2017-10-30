@@ -42,17 +42,15 @@ class Game {
     }
 
     draw() {
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(bg,0,0,canvas.width,canvas.height)
+        // ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 
     preloadImage(obj) {
-        let res = {
-            image:obj
-        }
-        loadImage(res)
-            .then((res) => {
+        loadImage(obj)
+            .then((obj) => {
                 log('load over')
-                this.create(res)
+                this.create(obj)
                 this.run()
             })
     }
