@@ -2,11 +2,11 @@ const canvas = document.createElement('canvas')
 const ctx = canvas.getContext('2d')
 
 class Game {
-    constructor(width, height, obj) {
+    constructor(width, height,style, obj) {
         document.body.appendChild(canvas)
         canvas.width = width
         canvas.height = height
-        ctx.fillStyle = '#000'
+        ctx.fillStyle = style || '#000'
         this.preload = obj.preload
         this.create = obj.create
         this.update = obj.update
@@ -92,7 +92,7 @@ class Sprite {
         this.speedY = obj.speedY || 2
         this.image = obj.image
         this.name = obj.name
-        this.num = 0
+        this.num = 1
         this.direction = 'right'
         this.isMove = false
     }

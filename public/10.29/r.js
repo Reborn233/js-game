@@ -98,11 +98,11 @@ function contain(sprite, container) {
         collision = "right"
     }
 
-    //Bottom
-    if (sprite.y + sprite.height > container.height) {
-        sprite.y = container.height - sprite.height
-        collision = "bottom"
-    }
+    // //Bottom
+    // if (sprite.y + sprite.height > container.height) {
+    //     sprite.y = container.height - sprite.height
+    //     collision = "bottom"
+    // }
     return collision
 }
 

@@ -14,7 +14,7 @@
 
 </html>
 <script>
-    const game = new Game(480, 320, {
+    const game = new Game(480, 320, '#ccc', {
         preload: preload,
         update: update,
         create: create
@@ -27,7 +27,7 @@
         this.preloadImage('./images/police.png')
     }
 
-    let id,police, bullet, bullets = []
+    let id, police, bullet, bullets = [], boss = []
 
     //创建元素
     function create(res) {
@@ -45,20 +45,17 @@
         police.isJump = false
         police.isDown = true
         //重写police绘制
-        police.add = function(){
-            let name,arr
-            if(this.direction === 'left'){
-                arr = ['left1','left2','left3','left4','fire_l']
-            }else{
-                arr = ['right1','right2','right3','right4','fire_r']
+        police.add = function () {
+            let name = this.direction + this.num + '.png'
+            this.width = id[name].frame.w
+            this.height = id[name].frame.h
+            this.posX = id[name].frame.x
+            this.posY = id[name].frame.y
+            if (this.num === 5 && this.direction === 'left') {
+                ctx.drawImage(this.image, this.posX, this.posY, this.width, this.height, this.x - 15, this.y, this.width, this.height)
+            } else {
+                ctx.drawImage(this.image, this.posX, this.posY, this.width, this.height, this.x, this.y, this.width, this.height)
             }
-            name = arr[this.num]
-            let key = name + '.png'
-            this.width = id[key].frame.w
-            this.height = id[key].frame.h
-            this.posX = id[key].frame.x
-            this.posY = id[key].frame.y
-            ctx.drawImage(this.image, this.posX,this.posY,this.width,this.height, this.x, this.y,this.width,this.height)
         }
         //police移动事件
         police.move = function (direction) {
@@ -84,13 +81,13 @@
         police.animate = function () {
             setInterval(() => {
                 if (!this.isMove) {
-                    this.num = 0
+                    this.num = 1
                     return
                 }
-                if(this.num>2){
-                    this.num= 0
-                }else{
-                    this.num +=1
+                if (this.num > 3) {
+                    this.num = 1
+                } else {
+                    this.num += 1
                 }
             }, 150)
         }
@@ -115,7 +112,7 @@
             }
         }
         //police 跳跃事件
-        police.jump = function(){
+        police.jump = function () {
             this.speedY += 10 / 20
             if (this.y >= canvas.height - this.height) {
                 this.speedY = 0
@@ -156,11 +153,46 @@
                 bullet.x = b.x
                 bullet.y = b.y
                 bullet.add()
+                if(isCollide(bullet,boss[0])){
+                    boss[0].x +=5
+                }
                 if (bullet.x >= canvas.width - bullet.width || bullet.x <= 0) {
                     bullets.splice(index, 1)
                 }
             })
         }
+
+        /* ------------------- boss -----------------------*/
+        id['wq.png'].name = 'wq'
+        id['wq.png'].image = res.image
+        //实例化子弹
+        let wq = new Sprite(id['wq.png'])
+        wq.x = canvas.width - wq.width
+        wq.y = canvas.height - wq.height -10
+        wq.move = function () {
+            this.x += this.speedX
+
+            let isHitWall = contain(wq, {
+                x: 0,
+                y: 320 - 48,
+                width: 480,
+                height: 50
+            })
+//            log(isHitWall)
+            if (isHitWall === 'left' || isHitWall === 'right') {
+                this.speedX *= -1
+            }else if (isHitWall === 'top' || isHitWall === 'bottom') {
+                this.speedX *= -1
+            }
+            if (isCrash(police, this, 0)) {
+                log('碰撞')
+            }
+
+        }
+        this.addChild(wq)
+        boss.push(wq)
+        //子弹射击速度
+        wq.speedX = .3
 
 
         /* ------------------- 按键绑定 -----------------------*/
@@ -195,7 +227,7 @@
                     break
                 case 'j':
                     police.fire()
-                    police.num = 4
+                    police.num = 5
                     break
             }
         })
@@ -207,8 +239,12 @@
     //游戏更新
     function update() {
         police.add()
-        bullet.create()
         police.jump()
+        boss.forEach((monster) => {
+            monster.add()
+            monster.move()
+        })
+        bullet.create()
     }
 
 
