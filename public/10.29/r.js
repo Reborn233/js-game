@@ -42,6 +42,10 @@ const typefor = (o) => {
         .toLowerCase()
 }
 
+const getJson = (res) =>{
+    return res.frames
+}
+
 //读取资源
 const loadImage = (obj) => {
     let res = {}

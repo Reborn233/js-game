@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>game</title>
+    <script src="./images/police.js"></script>
+    <script src="./r.js"></script>
+    <script src="./demo.js"></script>
+</head>
+
+<body>
+</body>
+
+</html>
+<script>
+    const game = new Game(480, 320, {
+        preload: preload,
+        update: update,
+        create: create
+    })
+    game.preload()
+
+    //预加载资源
+    function preload() {
+        log('加载资源')
+        this.preloadImage('./images/police.png')
+    }
+
+    let id,police, bullet, bullets = []
+
+    //创建元素
+    function create(res) {
+        id = getJson(texture)
+
+        /* ---------------- 人物 ------------------------*/
+        id['right1.png'].name = 'police'
+        id['right1.png'].image = res.image
+        //实例化police
+        police = new Sprite(id['right1.png'])
+        this.addChild(police)
+        //设置police位置
+        police.x = 0
+        police.y = canvas.height - police.height
+        police.isJump = false
+        police.isDown = true
+        //重写police绘制
+        police.add = function(){
+            let name,arr
+            if(this.direction === 'left'){
+                arr = ['left1','left2','left3','left4','fire_l']
+            }else{
+                arr = ['right1','right2','right3','right4','fire_r']
+            }
+            name = arr[this.num]
+            let key = name + '.png'
+            this.width = id[key].frame.w
+            this.height = id[key].frame.h
+            this.posX = id[key].frame.x
+            this.posY = id[key].frame.y
+            ctx.drawImage(this.image, this.posX,this.posY,this.width,this.height, this.x, this.y,this.width,this.height)
+        }
+        //police移动事件
+        police.move = function (direction) {
+            this.direction = direction
+            switch (direction) {
+                case 'left':
+                    if (this.x <= 0) {
+                        this.x = 0
+                    } else {
+                        this.x -= this.speedX
+                    }
+                    break
+                case 'right':
+                    if (this.x >= canvas.width - this.width) {
+                        this.x = canvas.width - this.width
+                    } else {
+                        this.x += this.speedX
+                    }
+                    break
+            }
+        }
+        //police动态行走事件
+        police.animate = function () {
+            setInterval(() => {
+                if (!this.isMove) {
+                    this.num = 0
+                    return
+                }
+                if(this.num>2){
+                    this.num= 0
+                }else{
+                    this.num +=1
+                }
+            }, 150)
+        }
+        //police 射击事件
+        police.fire = function () {
+            let direction = this.direction
+            switch (direction) {
+                case 'left':
+                    bullets.push({
+                        x: this.x,
+                        y: this.y + this.height / 2 + 2,
+                        direction: 'left'
+                    })
+                    break
+                case 'right':
+                    bullets.push({
+                        x: this.x + this.width,
+                        y: this.y + this.height / 2 + 2,
+                        direction: 'right'
+                    })
+                    break
+            }
+        }
+        //police 跳跃事件
+        police.jump = function(){
+            this.speedY += 10 / 20
+            if (this.y >= canvas.height - this.height) {
+                this.speedY = 0
+                this.y = canvas.height - this.height
+                this.isDown = true
+                this.isJump = false
+            }
+            if (this.y < canvas.height - this.height) {
+                this.isDown = false
+                this.isJump = true
+            } else {
+                this.isDown = true
+                this.isJump = false
+            }
+            this.y += this.speedY
+        }
+        police.animate()
+
+        /* ------------------- 子弹 ---------------------*/
+        id['bullet.png'].name = 'bullet'
+        id['bullet.png'].image = res.image
+        //实例化子弹
+        bullet = new Sprite(id['bullet.png'])
+        this.addChild(bullet)
+        //子弹射击速度
+        bullet.speedX = 5
+        //子弹的绘制
+        bullet.create = function () {
+            bullets.forEach((b, index) => {
+                if (index > 10) {
+                    return
+                }
+                if (b.direction === 'left') {
+                    b.x -= bullet.speedX
+                } else {
+                    b.x += bullet.speedX
+                }
+                bullet.x = b.x
+                bullet.y = b.y
+                bullet.add()
+                if (bullet.x >= canvas.width - bullet.width || bullet.x <= 0) {
+                    bullets.splice(index, 1)
+                }
+            })
+        }
+
+
+        /* ------------------- 按键绑定 -----------------------*/
+        this.registerAction('j', () => {
+        })
+        this.registerAction('a', () => {
+            police.move('left')
+            police.isMove = true
+        })
+        this.registerAction('d', () => {
+            police.move('right')
+            police.isMove = true
+        })
+        this.registerAction('w', () => {
+            if (police.isJump && !police.isDown) {
+                return
+            }
+            police.isJump = true
+            police.speedY = -10
+            police.y += police.speedY
+        })
+        window.addEventListener('keyup', (e) => {
+            switch (e.key) {
+                case 'd':
+                    police.isMove = false
+                    break
+                case 'a':
+                    police.isMove = false
+                    break
+                case 'w':
+                    police.isJump = false
+                    break
+                case 'j':
+                    police.fire()
+                    police.num = 4
+                    break
+            }
+        })
+        /* ------------------  按键事件 end ------------------------*/
+
+
+    }
+
+    //游戏更新
+    function update() {
+        police.add()
+        bullet.create()
+        police.jump()
+    }
+
+
+</script>

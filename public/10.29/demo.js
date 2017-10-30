@@ -46,7 +46,10 @@ class Game {
     }
 
     preloadImage(obj) {
-        loadImage(obj)
+        let res = {
+            image:obj
+        }
+        loadImage(res)
             .then((res) => {
                 log('load over')
                 this.create(res)
@@ -68,7 +71,11 @@ class Game {
         this.keyBoard.actions[key] = callback
     }
 
-    addChild(obj) {
+    addSprite(obj) {
+        let sprite = new Sprite(obj)
+        this.sprites[obj.name] = sprite
+    }
+    addChild(obj){
         this.sprites[obj.name] = obj
     }
 }
@@ -77,22 +84,21 @@ class Sprite {
     constructor(obj) {
         this.x = obj.x || 0
         this.y = obj.y || 0
-        this.width = obj.width
-        this.height = obj.height
+        this.width = obj.frame.w
+        this.height = obj.frame.h
+        this.posX = obj.frame.x
+        this.posY = obj.frame.y
         this.speedX = obj.speedX || 2
         this.speedY = obj.speedY || 2
         this.image = obj.image
+        this.name = obj.name
         this.num = 0
         this.direction = 'right'
         this.isMove = false
     }
 
     add() {
-        if (typefor(this.image) === 'object') {
-            ctx.drawImage(this.image[this.direction][this.num], this.x, this.y)
-        } else {
-            ctx.drawImage(this.image, this.x, this.y)
-        }
+        ctx.drawImage(this.image, this.posX,this.posY,this.width,this.height, this.x, this.y,this.width,this.height)
     }
 
     change() {

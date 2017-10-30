@@ -6,165 +6,67 @@
     <title>射击</title>
 </head>
 <style>
-    * {
-        padding: 0;
-        margin: 0;
-    }
+* {
+    padding: 0;
+    margin: 0;
+}
 </style>
 
 <body>
 </body>
 
 </html>
-<script src="./trd/pixi.min.js"></script>
 <script src="./r.js"></script>
 <script>
-    log('加载游戏资源')
-    const renderer = PIXI.autoDetectRenderer(640, 480)
-    document.body.appendChild(renderer.view)
-    PIXI.loader.add('image/texture.json').load(start)
-    stage = new PIXI.Container() //舞台
-    let gameScene //主场景
-    let gameOverScene //game over场景
-    let state = play //游戏状态  play 或者 stop
-    let keyBoard = keyPush()
-    gameScene = new PIXI.Container()
-    gameOverScene = new PIXI.Container()
-    gameOverScene.visible = true
-    let id,police,bullets=[]
+const canvas = document.createElement('canvas')
+document.body.appendChild(canvas)
+const ctx = canvas.getContext('2d')
+canvas.width = 480
+canvas.height = 320
+ctx.fillStyle = "#ccc"
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+let resoure
+const _main = async() => {
 
-    function start() {
-        log('游戏资源加载完成')//添加场景
-        stage.addChild(gameScene)
-        stage.addChild(gameOverScene)
+    let img = {
+        image: './image/texture.png'
+    }
+    await loadImage(img)
+        .then((res) => {
+            resoure = res
+            setInterval(update, 1000 / 60)
+        })
 
-        // 获取所有加载的素材
-        id = PIXI.loader.resources["image/texture.json"].textures
-        addPolice()
-        addBullet()
-        runLoop()
+}
+
+const update = () => {
+
+    let img = {
+        x: canvas.width / 2 - resoure.image.width / 2,
+        y: canvas.height / 2 - resoure.image.height / 2,
+        image: resoure.image
     }
 
-    let timer
-
-    //60帧数渲染
-    function runLoop() {
-        timer = requestAnimFrame(runLoop)
-        // 渲染舞台
-        state()
-        renderer.render(stage)
+    let json = {
+        img1: {
+            x: 5,
+            y: 5,
+            width: 35,
+            height: 30,
+            pos: [00, 0]
+        },
+        img2: {
+            x: 5,
+            y: 40,
+            width: 35,
+            height: 30,
+            pos: [33, 0]
+        },
     }
-
-    function play() {
-        keyBind()
-        bullets.forEach(function(bullet,index){
-            if(!bullet.visible){
-                return
-            }
-            bullet.x = bullet.x-8
-            bullet.x += bullet.vx+14*index
-            if(bullet.x>=renderer.width-bullet.width){
-                bullet.visible = false
-                bullet.x =police.x+police.width
-            }
-        })
-    }
-
-    function stop() {
-
-    }
-
-    //按键绑定
-    function keyBind() {
-        window.addEventListener('keydown', function(e) {
-            keyBoard.keydowns[e.key] = true
-        })
-
-        window.addEventListener('keyup', function(e) {
-            keyBoard.keydowns[e.key] = false
-        })
-        let actions = Object.keys(keyBoard.actions)
-        for (let i = 0; i < actions.length; i++) {
-            let key = actions[i]
-            if (keyBoard.keydowns[key]) {
-                keyBoard.actions[key]()
-            }
-        }
-        window.addEventListener('keydown', function(e) {
-            if (e.keyCode === 32) {
-                if (state === play) {
-                    state = stop
-                } else {
-                    state = play
-                }
-            }
-        })
-        keyBoard.registerAction('j', function() {
-            if (state === stop) {
-                return
-            }
-            police.fire()
-        })
-        keyBoard.registerAction('a', function() {
-            police.move('left')
-        })
-        keyBoard.registerAction('w', function() {
-        })
-        keyBoard.registerAction('d', function() {
-            police.move('right')
-        })
-        keyBoard.registerAction('s', function() {
-        })
-    }
-
-    function addPolice() {
-        police = new PIXI.Sprite(id["police1_r.png"])
-        police.x = 0;
-        police.y = renderer.height- police.height
-        police.vx = 2
-        police.vy = 2
-        police.move = function(direction){
-            if (state === stop) {
-                return
-            }
-            switch (direction){
-                case 'left':
-                    if (police.x <= -15) {
-                        police.x = -15
-                    } else {
-                        police.x -= police.vx
-                    }
-                    police.setTexture(id['police1_l.png'])
-                    break
-                case 'right':
-                    if (police.x >= renderer.width - police.width+15) {
-                        police.x = renderer.width - police.width+15
-                    } else {
-                        police.x += police.vx
-                    }
-                    police.setTexture(id['police1_r.png'])
-            }
-
-        }
-        police.fire =function () {
-            log('fire')
-        }
-        gameScene.addChild(police)
-    }
-
-    function addBullet() {
-        let num = 5,
-            spacing = 19,
-            speed = 5 // 速度
-        for (let i =0;i<num;i++){
-            let bullet = new PIXI.Sprite(id["pppp.png"])
-            bullet.x = police.x+police.width-5
-            bullet.y = police.y+police.height/2
-            bullet.vx = speed
-            bullet.vy = speed
-            bullet.visible = false
-            bullets.push(bullet)
-            gameScene.addChild(bullet)
-        }
-    }
+    let o1 = json.img1,
+        o2 = json.img2
+    ctx.drawImage(img.image, o1.pos[0], o1.pos[1], o1.width, o1.height, o1.x, o1.y, o1.width, o1.height)
+    ctx.drawImage(img.image, o2.pos[0], o2.pos[1], o2.width, o2.height, o2.x, o2.y, o2.width, o2.height)
+}
+_main()
 </script>
