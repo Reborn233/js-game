@@ -6,7 +6,7 @@ class Game {
         document.body.appendChild(canvas)
         canvas.width = width
         canvas.height = height
-        ctx.fillStyle = '#ccc'
+        ctx.fillStyle = '#000'
         this.preload = obj.preload
         this.create = obj.create
         this.update = obj.update
@@ -19,7 +19,6 @@ class Game {
         window.addEventListener('keyup', (e) => {
             this.keyBoard.keydowns[e.key] = false
         })
-        // this.preload()
     }
 
     run() {
@@ -30,13 +29,9 @@ class Game {
 
     runLoop() {
         this.keyBind()
-        this.update()
         this.clear()
         this.draw()
-        let arr = Object.keys(this.sprites)
-        arr.forEach((sprite) => {
-            this.sprites[sprite].add()
-        })
+        this.update()
         setTimeout(() => {
             this.runLoop()
         }, 1000 / this.fps)
@@ -78,14 +73,16 @@ class Game {
         this.sprites[obj.name] = sprite
     }
 
+
+
 }
 
 class Sprite {
     constructor(obj) {
         this.x = obj.x
         this.y = obj.y
-        this.width = obj.image['right'][0].width
-        this.height = obj.image['right'][0].height
+        this.width = obj.width
+        this.height = obj.height
         this.speedX = obj.speedX || 2
         this.speedY = obj.speedY || 2
         this.image = obj.image
@@ -95,7 +92,11 @@ class Sprite {
     }
 
     add() {
-        ctx.drawImage(this.image[this.direction][this.num], this.x, this.y)
+        if (typefor(this.image) === 'object') {
+            ctx.drawImage(this.image[this.direction][this.num], this.x, this.y)
+        } else {
+            ctx.drawImage(this.image, this.x, this.y)
+        }
     }
 
     change() {

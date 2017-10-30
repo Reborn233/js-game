@@ -7,12 +7,12 @@ window.requestAnimFrame = (function() {
         }
 })()
 
-window.cancelAnimFrame = (function(){
+window.cancelAnimFrame = (function() {
     return window.cancelAnimationFrame ||
-    window.mozCancelAnimationFrame ||
-    function(timer){
-        window.clearTimeout(timer)
-    }
+        window.mozCancelAnimationFrame ||
+        function(timer) {
+            window.clearTimeout(timer)
+        }
 })()
 
 window.log = console.log.bind(console)
@@ -21,11 +21,11 @@ window.log = console.log.bind(console)
 const getRcolor = res => { Math.floor(Math.random() * (2 << 3)).toString(16) }
 
 //简单碰撞检测
-const isCollide = (sprite1,sprite2) => {
-    if (sprite1.x + sprite1.width < sprite2.x 
-        || sprite1.y + sprite1.height < sprite2.height 
-        || sprite2.x + sprite2.width < sprite1.x 
-        || sprite2.y + sprite2.height < sprite1.height ) {
+const isCollide = (sprite1, sprite2) => {
+    if (sprite1.x + sprite1.width < sprite2.x ||
+        sprite1.y + sprite1.height < sprite2.height ||
+        sprite2.x + sprite2.width < sprite1.x ||
+        sprite2.y + sprite2.height < sprite1.height) {
         return false
     }
     return true
@@ -34,6 +34,12 @@ const isCollide = (sprite1,sprite2) => {
 //随机数
 const randomNum = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+const typefor = (o) => {
+    return Object.prototype.toString.call(o)
+        .match(/(\w+)\]$/)[1]
+        .toLowerCase()
 }
 
 //读取资源
@@ -56,7 +62,7 @@ const loadImage = (obj) => {
 }
 
 //圆球碰撞
-function isCrash(obj1, obj2,dis = 10) {
+function isCrash(obj1, obj2, dis = 10) {
     let x = obj1.x - obj2.x;
     let y = obj1.y - obj2.y;
     let distance = Math.sqrt(x * x + y * y); //开方函数
@@ -98,14 +104,14 @@ function contain(sprite, container) {
 
 //绑定键位事件
 
-function keyPush(){
+function keyPush() {
     let u = {
-        actions:{},
-        keydowns:{},
-        registerAction:function(key,callback){
+        actions: {},
+        keydowns: {},
+        registerAction: function(key, callback) {
             this.actions[key] = callback
         },
-        reset:function(){
+        reset: function() {
             this.actions = {}
             this.keydowns = {}
         }
