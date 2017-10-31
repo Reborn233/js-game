@@ -4,219 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <title>game</title>
-    <script src="./r.js"></script>
-    <script src="./game.js"></script>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 
 <body>
 </body>
 
 </html>
+<script src="./images/texture.js"></script>
+<script src="./r.js"></script>
+<script src="./game.js"></script>
 <script>
-    //定义元素对象
-    let police, bullet, bullets = []
-    //实例化game
-    const game = new Game(480, 320, {
+    const game = new Game(512, 512, '#ccc', {
         preload: preload,
-        update: update,
-        create: create
+        start: start
     })
-    game.preload()
+    let scene1, scene2
+
+    let id = getJson(texture)
 
     //预加载资源
     function preload() {
         log('加载资源')
         let img = {
-            police_r1: './images/right1.png',
-            police_r2: './images/right2.png',
-            police_r3: './images/right3.png',
-            police_r4: './images/right4.png',
-            police_l1: './images/left1.png',
-            police_l2: './images/left2.png',
-            police_l3: './images/left3.png',
-            police_l4: './images/left4.png',
-            fire_r: './images/fire_r.png',
-            fire_l: './images/fire_l.png',
-            bullet: './images/bullet.png',
+            image: './images/texture.png',
         }
         this.preloadImage(img)
     }
 
-    //创建元素
-    function create(res) {
-        /* ------------------  police元素 start ------------------------*/
-        let oPolice = {
-            x: 0,
-            y: canvas.height - res.police_r1.height,
-            image: {
-                right: [res.police_r1, res.police_r2, res.police_r3, res.police_r4, res.fire_r],
-                left: [res.police_l1, res.police_l2, res.police_l3, res.police_l4, res.fire_l]
-            },
-            width: res.police_r1.width,
-            height: res.police_r1.height,
-            name: 'police',
-            speedY: 0,
-
-        }
-        //添加元素
-        police = new Sprite(oPolice)
-        this.addChild(police)
-        //添加元素移动事件
-        police.move = move
-        //添加元素射击
-        police.fire = fire
-        //添加元素跳跃
-        police.isJump = false
-        police.isDown = true
-        police.jump = jump
-        //元素走动效果
-        police.change()
-        /* ------------------  police元素 end ------------------------*/
-
-        /* ------------------  子弹元素 start ------------------------*/
-        let oBullet = {
-            x: 0,
-            y: 0,
-            image: res.bullet,
-            width: res.bullet.width,
-            height: res.bullet.height,
-            speedX: 5,
-            name: 'bullet',
-        }
-        //添加元素
-        bullet = new Sprite(oBullet)
-        this.addChild(bullet)
-        bullet.bulletMove = bulletMove
-        /* ------------------  子弹元素 end ------------------------*/
-
-
-        /* ------------------  按键事件 start ------------------------*/
-        this.registerAction('j', () => {
-        })
-        this.registerAction('a', () => {
-            police.move('left')
-            police.isMove = true
-        })
-        this.registerAction('d', () => {
-            police.move('right')
-            police.isMove = true
-        })
-        this.registerAction('w', () => {
-            if (police.isJump && !police.isDown) {
-                return
-            }
-            police.isJump = true
-            police.speedY = -10
-            police.y += police.speedY
-        })
-        window.addEventListener('keyup', (e) => {
-            switch (e.key) {
-                case 'd':
-                    police.isMove = false
-                    break
-                case 'a':
-                    police.isMove = false
-                    break
-                case 'w':
-                    police.isJump = false
-                    break
-                case 'j':
-                    police.fire()
-                    police.num = 4
-                    break
-            }
-        })
-        /* ------------------  按键事件 end ------------------------*/
-
-
-    }
-
-    //游戏更新
-    function update() {
-        police.add()
-        bullet.bulletMove()
-        police.jump()
+    function start() {
+        scene1 = SceneStart.new(game)
+        this.runWithScene(scene1)
     }
 
 
-    //police移动事件
-    function move(direction) {
-        this.direction = direction
-        switch (direction) {
-            case 'left':
-                if (this.x <= -20) {
-                    this.x = -20
-                } else {
-                    this.x -= this.speedX
-                }
-                break
-            case 'right':
-                if (this.x >= canvas.width - this.width + 20) {
-                    this.x = canvas.width - this.width + 20
-                } else {
-                    this.x += this.speedX
-                }
-                break
-        }
-    }
-
-    //police射击事件
-    function fire() {
-        let direction = this.direction
-        switch (direction) {
-            case 'left':
-                bullets.push({
-                    x: this.x + 10,
-                    y: this.y + this.height / 2,
-                    direction: 'left'
-                })
-                break
-            case 'right':
-                bullets.push({
-                    x: this.x + this.width - 10,
-                    y: this.y + this.height / 2,
-                    direction: 'right'
-                })
-                break
-        }
-    }
-
-    //police 跳跃事件
-    function jump() {
-        this.speedY += 10 / 20
-        if (this.y >= canvas.height - this.height) {
-            this.speedY = 0
-            this.y = canvas.height - this.height
-            this.isDown = true
-            this.isJump = false
-        }
-        if (this.y < canvas.height - this.height) {
-            this.isDown = false
-            this.isJump = true
-        } else {
-            this.isDown = true
-            this.isJump = false
-        }
-        this.y += this.speedY
-    }
-
-    //bullet 移动
-    function bulletMove() {
-        bullets.forEach((b, index) => {
-            if (index > 10) {
-                return
-            }
-            if (b.direction === 'left') {
-                b.x -= this.speedX
-            } else {
-                b.x += this.speedX
-            }
-            this.y = b.y
-            this.x = b.x
-            this.add()
-            if (this.x >= canvas.width - this.width || this.x <= 0) {
-                bullets.splice(index, 1)
-            }
-        })
-    }
 </script>
