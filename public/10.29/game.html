@@ -19,11 +19,10 @@
 <script src="./r.js"></script>
 <script src="./game.js"></script>
 <script>
-    const game = new Game(512, 512, '#ccc', {
+    const game = new Game(480, 320, '#ccc', {
         preload: preload,
         start: start
     })
-    let scene1, scene2
 
     let id = getJson(texture)
 
@@ -37,8 +36,9 @@
     }
 
     function start() {
-        scene1 = SceneStart.new(game)
-        this.runWithScene(scene1)
+        let s = SceneStart.new(game)
+//        let s = SceneMain.new(game)
+        this.runWithScene(s)
     }
 
 
