@@ -1,16 +1,16 @@
-window.requestAnimFrame = (function() {
+window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
         window.mozRequestAnimationFrame ||
-        function(callback) {
+        function (callback) {
             window.setTimeout(callback, 1000 / 60)
         }
 })()
 
-window.cancelAnimFrame = (function() {
+window.cancelAnimFrame = (function () {
     return window.cancelAnimationFrame ||
         window.mozCancelAnimationFrame ||
-        function(timer) {
+        function (timer) {
             window.clearTimeout(timer)
         }
 })()
@@ -18,7 +18,9 @@ window.cancelAnimFrame = (function() {
 window.log = console.log.bind(console)
 
 //随机色
-const getRcolor = res => { Math.floor(Math.random() * (2 << 3)).toString(16) }
+const getRcolor = res => {
+    Math.floor(Math.random() * (2 << 3)).toString(16)
+}
 
 //简单碰撞检测
 const isCollide = (sprite1, sprite2) => {
@@ -42,7 +44,7 @@ const typefor = (o) => {
         .toLowerCase()
 }
 
-const getJson = (res) =>{
+const getJson = (res) => {
     return res.frames
 }
 
@@ -93,14 +95,14 @@ function contain(sprite, container) {
     }
 
     //Right
-    if (sprite.x + sprite.width > container.width) {
-        sprite.x = container.width - sprite.width
+    if (sprite.x + sprite.width > container.x + container.width) {
+        sprite.x = container.x + container.width - sprite.width
         collision = "right"
     }
 
     //Bottom
-    if (sprite.y + sprite.height > container.height) {
-        sprite.y = container.height - sprite.height
+    if (sprite.y + sprite.height > container.y + container.height) {
+        sprite.y = container.y + container.height - sprite.height
         collision = "bottom"
     }
     return collision
@@ -112,10 +114,10 @@ function keyPush() {
     let u = {
         actions: {},
         keydowns: {},
-        registerAction: function(key, callback) {
+        registerAction: function (key, callback) {
             this.actions[key] = callback
         },
-        reset: function() {
+        reset: function () {
             this.actions = {}
             this.keydowns = {}
         }

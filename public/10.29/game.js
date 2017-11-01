@@ -366,7 +366,7 @@ class Monster extends Sprite {
     }
 
     setup() {
-        this.speedX = .3
+        this.speedX = .7
         this.x = canvas.width - 200
         this.y = canvas.height - this.height
         this.attr = {
@@ -377,15 +377,23 @@ class Monster extends Sprite {
     }
 
     update() {
+        let self = this
         if (this.cooling > 0) {
             this.cooling--
         }
         this.hp1.setPosition(this.x + this.width / 2 - this.hp1.width / 2, this.y - 40)
         this.hp2.setPosition(this.x + this.width / 2 - this.hp1.width / 2, this.y - 40)
-        // this.x -= this.speedX
-        // if (this.x <= 0 - this.width) {
-        //     this.setup()
-        // }
+
+        this.x-=this.speedX
+        let blobHitWall = contain(self, {
+            x: 150,
+            y: canvas.height - self.height,
+            width: 200,
+            height: self.height,
+        })
+        if (blobHitWall === 'left' || blobHitWall === 'right') {
+            this.speedX *= -1
+        }
         this.spread()
 
     }
