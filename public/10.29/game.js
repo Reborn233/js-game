@@ -236,7 +236,7 @@ class Player extends Sprite {
     }
 
     update() {
-        let wq = this.direction === 'left' ? Player.new(id['wq_l.png']) : Player.new(id['wq.png'])
+        let wq = this.direction === 'left' ? Player.new(id['reborn_l.png']) : Player.new(id['reborn.png'])
         let weapon = this.direction === 'left' ? Player.new(id['mp5_l.png']) : Player.new(id['mp5.png'])
         this.posX = wq.posX
         this.posY = wq.posY
@@ -269,7 +269,7 @@ class Player extends Sprite {
             bullet.direction = this.direction
             bullet.x = this.direction === 'right' ? this.weapon.x + this.weapon.width : this.weapon.x
             bullet.y = this.weapon.y - 1
-            this.scene.sprites.bullets.push(bullet)
+            this.bullets.push(bullet)
         }
     }
 
@@ -370,9 +370,8 @@ class Monster extends Sprite {
         this.x = canvas.width - 200
         this.y = canvas.height - this.height
         this.attr = {
-            hp: 150
+            hp: 100
         }
-        this.bullets = []
         this.cooling = 0
     }
 
@@ -384,7 +383,8 @@ class Monster extends Sprite {
         this.hp1.setPosition(this.x + this.width / 2 - this.hp1.width / 2, this.y - 40)
         this.hp2.setPosition(this.x + this.width / 2 - this.hp1.width / 2, this.y - 40)
 
-        this.x-=this.speedX
+        this.spread()
+        this.x -= this.speedX
         let blobHitWall = contain(self, {
             x: 150,
             y: canvas.height - self.height,
@@ -394,7 +394,6 @@ class Monster extends Sprite {
         if (blobHitWall === 'left' || blobHitWall === 'right') {
             this.speedX *= -1
         }
-        this.spread()
 
     }
 
@@ -403,14 +402,14 @@ class Monster extends Sprite {
             let bullet2 = Bullet.new(id['bullet2.png'])
             bullet2.x = this.x + this.width / 2 - bullet2.width / 2
             bullet2.y = this.y + this.height / 2 - bullet2.height / 2
-            bullet2.speedX = randomNum(-5, 5)
-            bullet2.speedY = randomNum(-5, 5)
+            bullet2.speedX = randomNum(-2, 2)
+            bullet2.speedY = randomNum(-2, 2)
             bullet2.update = () => {
                 bullet2.x += bullet2.speedX
                 bullet2.y += bullet2.speedY
             }
             if (this.cooling === 0) {
-                this.cooling = 4
+                this.cooling = 5
                 this.bullets.push(bullet2)
             }
         }
@@ -462,9 +461,9 @@ class SceneMain extends Scene {
 
     setup() {
         const g = this.game
-        this.sprites.bullets = []
         //玩家
-        this.wq = Player.new(id['wq.png'])
+        this.wq = Player.new(id['reborn.png'])
+        this.wq.bullets = []
         let p = this.wq
         //玩家血条
         p.hp1 = Hp.new(p.attr.hp, 5)
@@ -473,7 +472,8 @@ class SceneMain extends Scene {
         p.weapon = Weapon.new(id['mp5.png'])
 
         //blob
-        this.yt = Monster.new(id['yt.png'])
+        this.yt = Monster.new(id['zbb.png'])
+        this.yt.bullets = []
         let b = this.yt
         //blob血条
         b.hp1 = Hp.new(b.attr.hp, 10)
@@ -504,9 +504,14 @@ class SceneMain extends Scene {
         })
     }
 
+    init() {
+        this.wq.setup()
+        this.yt.setup()
+    }
+
     draw() {
         super.draw()
-        let bullet = this.sprites.bullets
+        let bullet = this.wq.bullets
         bullet.forEach((b, i) => {
             this.game.drawImage(b)
         })
@@ -518,36 +523,43 @@ class SceneMain extends Scene {
 
     update() {
         super.update()
-        if(this.wq.attr.hp<=0){
+        if (this.wq.attr.hp <= 0) {
+            this.init()
             alert('你死了')
             let s = SceneEnd.new(this.game)
             this.game.replaceScene(s)
             return
         }
-        if(this.yt.attr.hp<=0){
+        if (this.yt.attr.hp <= 0) {
+            this.init()
             alert('你赢了')
             let s = SceneEnd.new(this.game)
             this.game.replaceScene(s)
             return
         }
-        this.sprites.bullets.forEach((b, i) => {
+        this.wq.bullets.forEach((b, i) => {
             b.update()
             if (b.x >= canvas.width - b.width) {
-                this.sprites.bullets.splice(i, 1)
+                this.wq.bullets.splice(i, 1)
             }
             if (isCollide(b, this.yt)) {
-                this.yt.x += 5
+                if(this.wq.direction === 'left'){
+                    this.yt.x -= 5
+                }else{
+                    this.yt.x += 5
+                }
                 this.yt.subHp()
-                this.sprites.bullets.splice(i, 1)
+                this.wq.bullets.splice(i, 1)
             }
         })
         this.yt.bullets.forEach((b2, i) => {
             b2.update()
             if (b2.x <= 0 || b2.x >= canvas.width || b2.y <= 0 || b2.y >= canvas.height) {
-                this.yt.bullets.splice(i,1)
+                this.yt.bullets.splice(i, 1)
             }
-            if(isCollide(b2,this.wq)){
+            if (isCollide(b2, this.wq)) {
                 this.wq.subHp()
+                this.yt.bullets.splice(i, 1)
             }
         })
     }
