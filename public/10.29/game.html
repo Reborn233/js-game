@@ -13,24 +13,46 @@
 
 <body>
 </body>
-
+<div class="action">
+    <label>
+        玩家速度:<input type="range" data-config="config.PlayerSpeed" class="set_params" max="20" value="7"/>
+    </label>
+    <label>
+        玩家子弹速度:<input type="range" data-config="config.PlayerBulletSpeed" class="set_params" max="20" value="7"/>
+    </label>
+    <label>
+        玩家子弹冷却:<input type="range" data-config="config.PlayerBulletCool" class="set_params" max="20" value="7"/>
+    </label>
+</div>
 </html>
+<script src="config.js"></script>
 <script src="./images/texture.js"></script>
 <script src="./r.js"></script>
+<script src="main.js"></script>
 <script src="./game.js"></script>
 <script>
+    let inputs = document.querySelectorAll('.set_params')
+    inputs.forEach((input) => {
+        input.addEventListener('input', (e) => {
+            let val = e.target.value
+            let con = e.target.dataset.config
+            eval(con + '=' + val)
+
+        })
+    })
     const game = new Game(480, 320, '#ccc', {
         preload: preload,
         start: start
     })
 
-    let id = getJson(texture)
+    id = getJson(texture)
 
     //预加载资源
     function preload() {
         log('加载资源')
         let img = {
             image: './images/texture.png',
+            reborn: 'images/reborn.png',
         }
         this.preloadImage(img)
     }

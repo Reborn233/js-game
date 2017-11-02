@@ -1,187 +1,9 @@
-const canvas = document.createElement('canvas')
-const ctx = canvas.getContext('2d')
-window.pause = false
+/* ------------- 游戏素材 ----------------*/
 
-class Game {
-    constructor(width, height, style, obj) {
-        document.body.appendChild(canvas)
-        canvas.width = width
-        canvas.height = height
-        this.color = style || '#000'
-        this.preload = obj.preload
-        this.start = obj.start
-        this.keyBoard = keyPush()
-        this.fps = 60
-        this.scene = null
-        this.images = {}
-        window.addEventListener('keydown', (e) => {
-            this.keyBoard.keydowns[e.key] = true
-        })
-        window.addEventListener('keyup', (e) => {
-            this.keyBoard.keydowns[e.key] = false
-        })
-        window.addEventListener('keyup', (e) => {
-            if (e.key === ' ') {
-                window.pause = !window.pause
-            }
-        })
-        this.preload()
-    }
-
-    update() {
-        this.scene.update()
-    }
-
-    clear() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-    }
-
-    draw() {
-        this.scene.draw()
-    }
-
-    runLoop() {
-        this.keyBind()
-        this.update()
-        this.clear()
-        this.draw()
-        setTimeout(() => {
-            this.runLoop()
-        }, 1000 / this.fps)
-    }
-
-    preloadImage(obj) {
-        loadImage(obj)
-            .then((obj) => {
-                log('load over')
-                this.images = obj
-                for (let key in id) {
-                    id[key]['image'] = obj.image
-                }
-                this.start()
-            })
-    }
-
-    keyBind() {
-        let actions = Object.keys(this.keyBoard.actions)
-        for (let i = 0; i < actions.length; i++) {
-            let key = actions[i]
-            if (this.keyBoard.keydowns[key]) {
-                this.keyBoard.actions[key]()
-            }
-        }
-    }
-
-    registerAction(key, callback) {
-        this.keyBoard.actions[key] = callback
-    }
-
-    drawImage(obj) {
-        ctx.drawImage(obj.image, obj.posX, obj.posY, obj.width, obj.height, obj.x, obj.y, obj.width, obj.height)
-    }
-
-    drawText(obj) {
-        ctx.fillStyle = obj.color || '#000'
-        ctx.fillText(obj.txt, obj.x, obj.y)
-    }
-
-    drawRect(obj) {
-        ctx.fillStyle = obj.color || this.color
-        ctx.fillRect(obj.x, obj.y, obj.width, obj.height)
-    }
-
-    replaceScene(s) {
-        this.scene = s
-    }
-
-    runWithScene(s) {
-        this.scene = s
-        setTimeout(() => {
-            this.runLoop()
-        }, 1000 / this.fps)
-    }
-}
-
-class Sprite {
-    constructor(obj) {
-        this.x = 0
-        this.y = 0
-        this.width = obj.frame.w
-        this.height = obj.frame.h
-        this.posX = obj.frame.x
-        this.posY = obj.frame.y
-        this.speedX = 0
-        this.speedX = 0
-        this.image = obj.image
-    }
-
-    static new(...args) {
-        let i = new this(...args)
-        return i
-    }
-
-    draw() {
-    }
-
-    update() {
-    }
-
-    setSpeed(speedX, speedY) {
-        this.speedX = speedX
-        this.speedY = speedY
-    }
-
-    setPosition(x, y) {
-        this.x = x
-        this.y = y
-    }
-}
-
-class Scene {
-    constructor(game) {
-        this.game = game
-        this.sprites = []
-    }
-
-    static new(game, ...args) {
-        let i = new this(game, ...args)
-        return i
-    }
-
-    draw() {
-        const g = this.game
-        let bg = {
-            x: 0,
-            y: 0,
-            width: canvas.width,
-            height: canvas.height,
-        }
-        g.drawRect(bg)
-        this.sprites.forEach((sprite) => {
-            if (sprite.image) {
-                g.drawImage(sprite)
-            } else {
-                g.drawRect(sprite)
-            }
-        })
-    }
-
-    update() {
-        const g = this.game
-        this.sprites.forEach((sprite) => {
-            sprite.update && sprite.update(this.game)
-        })
-    }
-
-    addSprite(obj) {
-        obj.scene = this
-        this.sprites.push(obj)
-    }
-
-}
-
+//血条
 class Hp {
-    constructor(width, height, color) {
+    constructor(game, width, height, color) {
+        this.game = game
         this.x = 0
         this.y = 0
         this.width = width
@@ -192,6 +14,14 @@ class Hp {
     static new(...args) {
         let i = new this(...args)
         return i
+    }
+
+    setup(w) {
+        this.width = w
+    }
+
+    draw() {
+        this.game.drawRect(this)
     }
 
     update(g) {
@@ -215,41 +45,64 @@ class Hp {
     }
 }
 
+//背景陆地
+class Background {
+    constructor(game, x, y, width, height, color) {
+        this.x = x
+        this.y = y
+        this.game = game
+        this.width = width
+        this.height = height
+        this.color = color || '#000'
+    }
+
+    static new(...args) {
+        let i = new this(...args)
+        return i
+    }
+
+    draw() {
+        this.game.drawRect(this)
+    }
+}
+
+//玩家
 class Player extends Sprite {
-    constructor(...args) {
-        super(...args)
+    constructor(game, obj) {
+        super(game, obj)
         this.setup && this.setup()
     }
 
     setup() {
         this.x = 15
-        this.y = canvas.height - this.height
+        this.y = canvas.height - this.height - config.BgHeight
         this.speedY = 0
-        this.speedX = 2
+        this.speedX = config.PlayerSpeed
         this.attr = {
             hp: 50
         }
-        this.equip = null
         this.cooling = 0
         this.isDown = true
         this.direction = 'right'
     }
 
     update() {
-        let wq = this.direction === 'left' ? Player.new(id['reborn_l.png']) : Player.new(id['reborn.png'])
-        let weapon = this.direction === 'left' ? Player.new(id['mp5_l.png']) : Player.new(id['mp5.png'])
-        this.posX = wq.posX
-        this.posY = wq.posY
+        const g = this.game
+        this.speedX = config.PlayerSpeed
+        let player = this.direction === 'left' ? Player.new(g, id['wq_l.png']) : Player.new(g, id['wq.png'])
+        let weapon = this.direction === 'left' ? Player.new(g, id['mp5_l.png']) : Player.new(g, id['mp5.png'])
+        this.posX = player.posX
+        this.posY = player.posY
         this.weapon.posX = weapon.posX
         this.weapon.posY = weapon.posY
         if (this.cooling > 0) {
             this.cooling--
         }
-        if (this.y >= canvas.height - this.height) {
+        if (this.y >= canvas.height - this.height - config.BgHeight) {
             this.speedY = 0
             this.isDown = true
         }
-        if (this.y <= canvas.height - this.height - 15) {
+        if (this.y <= canvas.height - this.height - config.BgHeight - 15) {
             this.speedY += 1
         }
         this.y += this.speedY
@@ -263,13 +116,15 @@ class Player extends Sprite {
     }
 
     fire() {
+        const g = this.game
         if (this.cooling === 0) {
-            this.cooling = 9
-            let bullet = Bullet.new(id['bullet.png'])
-            bullet.direction = this.direction
-            bullet.x = this.direction === 'right' ? this.weapon.x + this.weapon.width : this.weapon.x
-            bullet.y = this.weapon.y - 1
-            this.bullets.push(bullet)
+            this.cooling = config.PlayerBulletCool
+            let playerB = Bullet.new(g, id['bullet.png'])
+            playerB.x = this.direction === 'right' ? this.x + this.width + 5 : this.x - 5
+            playerB.y = this.weapon.y - 1
+            playerB.direction = this.direction
+            this.bullets.push(playerB)
+
         }
     }
 
@@ -284,22 +139,22 @@ class Player extends Sprite {
                 }
                 break
             case 'right':
-                if (this.x >= canvas.width * 2 / 3 - this.width) {
-                    this.x = canvas.width * 2 / 3 - this.width
+                if (this.x >= canvas.width * 3 / 3 - this.width) {
+                    this.x = canvas.width * 3 / 3 - this.width
                 } else {
                     this.x += this.speedX
                 }
                 break
             case 'down':
-                if (this.y >= canvas.height - this.height - 32) {
-                    this.y = canvas.height - this.height - 32
+                if (this.y >= canvas.height - this.height - 30) {
+                    this.y = canvas.height - this.height - 30
                 } else {
                     this.y += this.speedY
                 }
                 break
             case 'up':
-                if (this.y <= 32) {
-                    this.y = 32
+                if (this.y <= 0) {
+                    this.y = 0
                 } else {
                     this.y -= this.speedY
                 }
@@ -327,9 +182,10 @@ class Player extends Sprite {
     }
 }
 
+//子弹
 class Bullet extends Sprite {
-    constructor(...args) {
-        super(...args)
+    constructor(game, obj) {
+        super(game, obj)
         this.setup()
     }
 
@@ -340,6 +196,8 @@ class Bullet extends Sprite {
     }
 
     update() {
+        this.speedX = config.PlayerBulletSpeed
+        this.speedY = config.PlayerBulletSpeed
         if (this.direction === 'right') {
             this.x += this.speedX
         } else {
@@ -348,9 +206,10 @@ class Bullet extends Sprite {
     }
 }
 
+//武器
 class Weapon extends Sprite {
-    constructor(...args) {
-        super(...args)
+    constructor(game, obj) {
+        super(game, obj)
         this.setup()
     }
 
@@ -359,16 +218,17 @@ class Weapon extends Sprite {
     }
 }
 
+//敌人
 class Monster extends Sprite {
-    constructor(...args) {
-        super(...args)
+    constructor(game, obj) {
+        super(game, obj)
         this.setup()
     }
 
     setup() {
         this.speedX = .7
         this.x = canvas.width - 200
-        this.y = canvas.height - this.height
+        this.y = canvas.height - this.height - config.BgHeight
         this.attr = {
             hp: 100
         }
@@ -387,23 +247,23 @@ class Monster extends Sprite {
         this.x -= this.speedX
         let blobHitWall = contain(self, {
             x: 150,
-            y: canvas.height - self.height,
+            y: 0,
             width: 200,
-            height: self.height,
+            height: canvas.height,
         })
         if (blobHitWall === 'left' || blobHitWall === 'right') {
             this.speedX *= -1
         }
-
     }
 
     spread() {
-        for (let i = 0; i < randomNum(30, 50); i++) {
-            let bullet2 = Bullet.new(id['bullet2.png'])
+        const g = this.game
+        for (let i = 0; i < randomNum(20, 30); i++) {
+            let bullet2 = Bullet.new(g, id['bullet2.png'])
             bullet2.x = this.x + this.width / 2 - bullet2.width / 2
             bullet2.y = this.y + this.height / 2 - bullet2.height / 2
-            bullet2.speedX = randomNum(-2, 2)
-            bullet2.speedY = randomNum(-2, 2)
+            bullet2.speedX = randomNum(1, 3) * [1, -1][randomNum(0, 1)]
+            bullet2.speedY = randomNum(1, 3) * [1, -1][randomNum(0, 1)]
             bullet2.update = () => {
                 bullet2.x += bullet2.speedX
                 bullet2.y += bullet2.speedY
@@ -425,6 +285,26 @@ class Monster extends Sprite {
     }
 }
 
+//
+class Reborn extends Sprite {
+    constructor(game, obj) {
+        super(game, obj)
+        this.setup()
+    }
+
+    setup() {
+
+    }
+
+    update() {
+        this.x += this.speedX
+        if (this.x >= canvas.width - this.width || this.x <= 0) {
+            this.speedX *= -1
+        }
+    }
+}
+
+//开始场景
 class SceneStart extends Scene {
     constructor(game) {
         super(game)
@@ -438,6 +318,10 @@ class SceneStart extends Scene {
     }
 
     setup(g) {
+        let reborn = g.readImage('reborn')
+        let r = Reborn.new(g, reborn)
+        r.speedX = 1
+        this.addSprite(r)
         g.registerAction('1', () => {
             let s = SceneMain.new(g)
             g.replaceScene(s)
@@ -445,14 +329,17 @@ class SceneStart extends Scene {
     }
 
     draw() {
+        super.draw()
         const g = this.game
         g.drawText(this.title)
     }
 
     update() {
+        super.update()
     }
 }
 
+//主场景
 class SceneMain extends Scene {
     constructor(game) {
         super(game)
@@ -461,24 +348,29 @@ class SceneMain extends Scene {
 
     setup() {
         const g = this.game
+        g.keyBoard.reset()
+        //bg
+        this.bg = Background.new(g, 0, canvas.height - config.BgHeight, canvas.width, config.BgHeight)
+        let bg = this.bg
         //玩家
-        this.wq = Player.new(id['reborn.png'])
-        this.wq.bullets = []
-        let p = this.wq
+        this.player = Player.new(g, id['wq.png'])
+        this.player.bullets = []
+        let p = this.player
         //玩家血条
-        p.hp1 = Hp.new(p.attr.hp, 5)
-        p.hp2 = Hp.new(p.attr.hp, 5, '#E13B3D')
+        p.hp1 = Hp.new(g, p.attr.hp, 5)
+        p.hp2 = Hp.new(g, p.attr.hp, 5, '#E13B3D')
         //武器
-        p.weapon = Weapon.new(id['mp5.png'])
+        p.weapon = Weapon.new(g, id['mp5.png'])
 
         //blob
-        this.yt = Monster.new(id['zbb.png'])
-        this.yt.bullets = []
-        let b = this.yt
+        this.monster = Monster.new(g, id['yt.png'])
+        this.monster.bullets = []
+        let b = this.monster
         //blob血条
-        b.hp1 = Hp.new(b.attr.hp, 10)
-        b.hp2 = Hp.new(b.attr.hp, 10, '#E13B3D')
+        b.hp1 = Hp.new(g, b.attr.hp, 10)
+        b.hp2 = Hp.new(g, b.attr.hp, 10, '#E13B3D')
 
+        this.addSprite(bg)
         this.addSprite(b)
         this.addSprite(b.hp1)
         this.addSprite(b.hp2)
@@ -486,7 +378,6 @@ class SceneMain extends Scene {
         this.addSprite(p.hp1)
         this.addSprite(p.hp2)
         this.addSprite(p.weapon)
-
 
         g.registerAction('j', () => {
             p.fire()
@@ -505,66 +396,68 @@ class SceneMain extends Scene {
     }
 
     init() {
-        this.wq.setup()
-        this.yt.setup()
+        this.player.setup()
+        this.monster.setup()
+        this.player.hp1.width = this.player.hp2.width = this.player.attr.hp
+        this.monster.hp1.width = this.monster.hp2.width = this.monster.attr.hp
     }
 
     draw() {
         super.draw()
-        let bullet = this.wq.bullets
-        bullet.forEach((b, i) => {
-            this.game.drawImage(b)
+        this.player.bullets.forEach((b, i) => {
+            b.draw()
         })
-        this.yt.bullets.forEach((b2, i) => {
-            this.game.drawImage(b2)
+        this.monster.bullets.forEach((b2, i) => {
+            b2.draw()
         })
 
     }
 
     update() {
+        if (window.pause) {
+            return
+        }
         super.update()
-        if (this.wq.attr.hp <= 0) {
-            this.init()
-            alert('你死了')
-            let s = SceneEnd.new(this.game)
-            this.game.replaceScene(s)
-            return
-        }
-        if (this.yt.attr.hp <= 0) {
-            this.init()
-            alert('你赢了')
-            let s = SceneEnd.new(this.game)
-            this.game.replaceScene(s)
-            return
-        }
-        this.wq.bullets.forEach((b, i) => {
+        let playerHitMonster = getDirrction(this.player, this.monster)
+        this.player.bullets.forEach((b, i) => {
             b.update()
             if (b.x >= canvas.width - b.width) {
-                this.wq.bullets.splice(i, 1)
+                this.player.bullets.splice(i, 1)
             }
-            if (isCollide(b, this.yt)) {
-                if(this.wq.direction === 'left'){
-                    this.yt.x -= 5
-                }else{
-                    this.yt.x += 5
+            if (isCollide(b, this.monster)) {
+                if (this.player.direction === 'left') {
+                    this.monster.x -= 5
+                } else {
+                    this.monster.x += 5
                 }
-                this.yt.subHp()
-                this.wq.bullets.splice(i, 1)
+                this.monster.subHp()
+                this.player.bullets.splice(i, 1)
             }
         })
-        this.yt.bullets.forEach((b2, i) => {
+        this.monster.bullets.forEach((b2, i) => {
             b2.update()
             if (b2.x <= 0 || b2.x >= canvas.width || b2.y <= 0 || b2.y >= canvas.height) {
-                this.yt.bullets.splice(i, 1)
+                this.monster.bullets.splice(i, 1)
             }
-            if (isCollide(b2, this.wq)) {
-                this.wq.subHp()
-                this.yt.bullets.splice(i, 1)
+            if (isCollide(b2, this.player)) {
+                let num = this.player.direction === 'right' ? -5 : 5
+                this.player.x += num
+                this.player.subHp()
+                this.monster.bullets.splice(i, 1)
             }
         })
+        if (this.player.attr.hp <= 0) {
+            this.init()
+            return
+        }
+        if (this.monster.attr.hp <= 0) {
+            this.init()
+            return
+        }
     }
 }
 
+//结束场景
 class SceneEnd extends Scene {
     constructor(game) {
         super(game)

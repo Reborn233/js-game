@@ -108,6 +108,29 @@ function contain(sprite, container) {
     return collision
 }
 
+function getDirrction(sprite1, sprite2) {
+    let direction = null
+    if (sprite1.y + sprite1.height > sprite2.y && sprite1.x + sprite1.width >= sprite2.x && sprite1.x + sprite1.width <= sprite2.x + sprite2.width) {
+        sprite1.x = sprite2.x - sprite1.width
+        direction = 'left'
+    }
+    if (sprite1.y + sprite1.height > sprite2.y && sprite2.x + sprite2.width >= sprite1.x && sprite2.x + sprite2.width <= sprite1.x + sprite1.width) {
+        sprite1.x = sprite2.x + sprite2.width
+        direction = 'right'
+    }
+    // if (sprite1.y + sprite1.height >= sprite2.y && sprite1.y + sprite1.height <= sprite2.y + sprite2.height) {
+    //     sprite1.y = sprite2.y - sprite1.height
+    //     direction = 'up'
+    // }
+    // if (sprite2.y + sprite2.height >= sprite1.y && sprite2.y + sprite2.height <= sprite1.y + sprite1.height) {
+    //     sprite1.y = sprite2.y + sprite2.height
+    //     direction = 'down'
+    // }
+
+    return direction
+
+}
+
 //绑定键位事件
 
 function keyPush() {

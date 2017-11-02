@@ -36,7 +36,7 @@
         <key>dataFormat</key>
         <string>pixijs</string>
         <key>textureFileName</key>
-        <filename></filename>
+        <filename>../10.29/images/texture.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -150,7 +150,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>C:/Users/Administrator/Desktop/utils/demo/police.json</filename>
+                <filename>../10.29/images/police.json</filename>
             </struct>
         </map>
         <key>multiPack</key>
@@ -199,32 +199,65 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">texture/bullet.png</key>
+            <key type="filename">../10.29/images/bg.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
-                <rect>1,1,3,3</rect>
+                <rect>129,129,257,257</rect>
                 <key>scale9Paddings</key>
-                <rect>1,1,3,3</rect>
+                <rect>129,129,257,257</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">texture/cj.png</key>
-            <key type="filename">texture/czh.png</key>
-            <key type="filename">texture/ly.png</key>
-            <key type="filename">texture/lyn.png</key>
-            <key type="filename">texture/reborn.png</key>
-            <key type="filename">texture/sxy.png</key>
-            <key type="filename">texture/wq.png</key>
-            <key type="filename">texture/wxj.png</key>
-            <key type="filename">texture/yt.png</key>
-            <key type="filename">texture/zc.png</key>
-            <key type="filename">texture/zq.png</key>
-            <key type="filename">texture/zxj.png</key>
-            <key type="filename">texture/zzl.png</key>
+            <key type="filename">../10.29/images/bullet.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>3,1,5,3</rect>
+                <key>scale9Paddings</key>
+                <rect>3,1,5,3</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">../10.29/images/bullet2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>4,4,8,8</rect>
+                <key>scale9Paddings</key>
+                <rect>4,4,8,8</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">../10.29/images/mp5.png</key>
+            <key type="filename">../10.29/images/mp5_l.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>8,3,15,5</rect>
+                <key>scale9Paddings</key>
+                <rect>8,3,15,5</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
+            <key type="filename">../10.29/images/reborn.png</key>
+            <key type="filename">../10.29/images/reborn_l.png</key>
+            <key type="filename">../10.29/images/wq.png</key>
+            <key type="filename">../10.29/images/wq_l.png</key>
+            <key type="filename">../10.29/images/yt.png</key>
+            <key type="filename">../10.29/images/zbb.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -234,58 +267,23 @@
                 <rect>12,12,24,24</rect>
                 <key>scale9Paddings</key>
                 <rect>12,12,24,24</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">texture/left1.png</key>
-            <key type="filename">texture/left2.png</key>
-            <key type="filename">texture/left3.png</key>
-            <key type="filename">texture/left4.png</key>
-            <key type="filename">texture/left5.png</key>
-            <key type="filename">texture/right1.png</key>
-            <key type="filename">texture/right2.png</key>
-            <key type="filename">texture/right3.png</key>
-            <key type="filename">texture/right4.png</key>
-            <key type="filename">texture/right5.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>11,9,23,17</rect>
-                <key>scale9Paddings</key>
-                <rect>11,9,23,17</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
         </map>
         <key>fileList</key>
         <array>
-            <filename>texture/bullet.png</filename>
-            <filename>texture/cj.png</filename>
-            <filename>texture/czh.png</filename>
-            <filename>texture/left1.png</filename>
-            <filename>texture/left2.png</filename>
-            <filename>texture/left3.png</filename>
-            <filename>texture/left4.png</filename>
-            <filename>texture/left5.png</filename>
-            <filename>texture/ly.png</filename>
-            <filename>texture/lyn.png</filename>
-            <filename>texture/reborn.png</filename>
-            <filename>texture/right1.png</filename>
-            <filename>texture/right2.png</filename>
-            <filename>texture/right3.png</filename>
-            <filename>texture/right4.png</filename>
-            <filename>texture/right5.png</filename>
-            <filename>texture/sxy.png</filename>
-            <filename>texture/wq.png</filename>
-            <filename>texture/wxj.png</filename>
-            <filename>texture/yt.png</filename>
-            <filename>texture/zc.png</filename>
-            <filename>texture/zq.png</filename>
-            <filename>texture/zxj.png</filename>
-            <filename>texture/zzl.png</filename>
+            <filename>../10.29/images/bg.png</filename>
+            <filename>../10.29/images/bullet.png</filename>
+            <filename>../10.29/images/mp5.png</filename>
+            <filename>../10.29/images/mp5_l.png</filename>
+            <filename>../10.29/images/wq.png</filename>
+            <filename>../10.29/images/wq_l.png</filename>
+            <filename>../10.29/images/yt.png</filename>
+            <filename>../10.29/images/bullet2.png</filename>
+            <filename>../10.29/images/reborn.png</filename>
+            <filename>../10.29/images/reborn_l.png</filename>
+            <filename>../10.29/images/zbb.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
