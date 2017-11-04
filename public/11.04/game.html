@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>game</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+</body>
+<div class="action">
+    <label>
+        地图等级:<input type="range" data-config="config.BgLevel" class="set_params" min="1" max="5" value="1"/>
+    </label>
+    <label>
+        玩家速度:<input type="range" data-config="config.PlayerSpeed" class="set_params" max="20" value="7"/>
+    </label>
+    <label>
+        玩家子弹速度:<input type="range" data-config="config.PlayerBulletSpeed" class="set_params" max="20" value="7"/>
+    </label>
+    <label>
+        玩家子弹冷却:<input type="range" data-config="config.PlayerBulletCool" class="set_params" max="20" value="7"/>
+    </label>
+</div>
+</html>
+<script src="config.js"></script>
+<!--<script src="./images/texture.js"></script>-->
+<script src="./r.js"></script>
+<script src="main.js"></script>
+<script src="./game.js"></script>
+<script>
+    let inputs = document.querySelectorAll('.set_params')
+    inputs.forEach((input) => {
+        input.addEventListener('input', (e) => {
+            let val = e.target.value
+            let con = e.target.dataset.config
+            eval(con + '=' + val)
+
+        })
+    })
+    const game = new Game(512, 612, '#ccc', {
+        preload: preload,
+        start: start
+    })
+
+    //预加载资源
+    function preload() {
+        log('加载资源')
+        let img = {
+            //站立
+            idle1:'images/idle/idle1.png',
+            idle2:'images/idle/idle2.png',
+            idle3:'images/idle/idle3.png',
+            idle4:'images/idle/idle4.png',
+            idle5:'images/idle/idle5.png',
+            idle6:'images/idle/idle6.png',
+            idle7:'images/idle/idle7.png',
+            idle8:'images/idle/idle8.png',
+            idle9:'images/idle/idle9.png',
+            idle10:'images/idle/idle10.png',
+            //跑动
+            run1:'images/run/run1.png',
+            run2:'images/run/run2.png',
+            run3:'images/run/run3.png',
+            run4:'images/run/run4.png',
+            run5:'images/run/run5.png',
+            run6:'images/run/run6.png',
+            run7:'images/run/run7.png',
+            run8:'images/run/run8.png',
+
+        }
+        this.preloadImage(img)
+    }
+
+    function start() {
+        log('start')
+        let s = SceneStart.new(game)
+//        let s = SceneMain.new(game)
+        this.runWithScene(s)
+    }
+
+
+</script>
