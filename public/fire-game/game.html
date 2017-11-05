@@ -11,6 +11,7 @@ es = 3
 sl = []
 sd = 4
 ss = 7
+cool = 0
 
 bl = []
 bd = 5
@@ -94,7 +95,9 @@ function update() {
     if (pause) {
         return
     }
-
+    if(cool >0){
+        cool --
+    }
 
     ctx.fillStyle = 'black'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -169,13 +172,13 @@ function keyPush() {
         if (pause) {
             return
         }
-        if (sl.length > 10) {
-            return
+        if (cool == 0) {
+            cool = 9
+            sl.push({
+                x: px + pd / 2 - sd / 2,
+                y: py
+            })
         }
-        sl.push({
-            x: px + pd / 2 - sd / 2,
-            y: py
-        })
     })
     u.registerAction('w', function() {
         if (pause) {
