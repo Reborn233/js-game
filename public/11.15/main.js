@@ -233,7 +233,7 @@ class SpriteAnimation {
     update() {
         this.frameCount--
         if (this.frameCount === 0) {
-            this.frameCount = 6
+            this.frameCount = 12
             this.frameIndex = (this.frameIndex + 1) % this.readFrame().length
             this.texture = this.readFrame()[this.frameIndex]
         }

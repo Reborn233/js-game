@@ -41,34 +41,38 @@ class Knight extends SpriteAnimation {
         super(game)
         this.game = game
         this.animations = {
-            knight: [],
+            idle: [],
+            run:[],
         }
-        game.loadAnimation(2, 'knight', this.animations['knight'])
-        this.animationName = 'knight'
+        game.loadAnimation(4, 'idle', this.animations['idle'])
+        game.loadAnimation(4, 'run', this.animations['run'])
+        this.animationName = 'idle'
         this.texture = this.readFrame()[0]
         this.width = this.texture.width
         this.height = this.texture.height
-        this.speedY = 3
-        this.speedX = 3
+        this.speedY = config.PlayerSpeed
+        this.speedX = config.PlayerSpeed
         this.equip = []
         this.bullets = []
         this.cooling = 0
     }
 
-    fire() {
+    fire(x, staX, y, staY) {
         if (this.cooling === 0) {
             this.cooling = config.PlayerBulletCool
             let b = Bullet.new(this.game)
-            b.x = this.x + this.width
+            b.x = this.flipX ? this.x : this.x + this.width
             b.y = this.y + this.height / 3
+            b.speedX = (x - staX) / b.speedX
+            b.speedY = (y - staY) / b.speedY
             this.bullets.push(b)
         }
     }
 
     move(direction, keyStatus) {
         let animationStatus = {
-            down: 'knight',
-            up: 'knight',
+            down: 'run',
+            up: 'idle',
         }
         this.changeAnimation(animationStatus[keyStatus])
         switch (direction) {
@@ -97,7 +101,7 @@ class Knight extends SpriteAnimation {
 
     update() {
         super.update()
-        this.speedX = config.PlayerSpeed
+        this.speedX = this.speedX = config.PlayerSpeed
         if (this.cooling > 0) {
             this.cooling--
         }
@@ -161,7 +165,7 @@ class Bullet extends SpriteAnimation {
 
     update() {
         this.x += this.speedX
-        this.y = this.x * this.k
+        this.y += this.speedY
     }
 
 }
@@ -213,13 +217,13 @@ class SceneStart extends Scene {
         p.x = 50
         p.y = 50
 
-        let line = Line.new(g)
-        this.line = line
+        // let line = Line.new(g)
+        // this.line = line
         this.addSprite(bg)
         this.addSprite(title)
         this.addSprite(p)
         this.addSprite(gun)
-        this.addSprite(line)
+        // this.addSprite(line)
         this.keyBind(game)
     }
 
@@ -262,16 +266,14 @@ class SceneStart extends Scene {
                     a = angle * Math.PI / 180,
                     staX = (x1 - rx0) * Math.cos(a) - (y1 - ry0) * Math.sin(a) + rx0,
                     staY = (x1 - rx0) * Math.sin(a) + (y1 - ry0) * Math.cos(a) + ry0
-                this.p.bullets.forEach((b) => {
-                    b.k = (y - staY) / (x - staX)
-                })
-                this.line.setData({
-                    staX: staX,
-                    staY: staY,
-                    endX: x,
-                    endY: y,
-                })
-                this.p.fire()
+                // this.line.setData({
+                //     staX: staX,
+                //     staY: staY,
+                //     endX: x,
+                //     endY: y,
+                // })
+                let k = (y - staY) / (x - staX)
+                this.p.fire(x, staX, y, staY)
             }
         })
     }
