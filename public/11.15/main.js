@@ -16,10 +16,10 @@ class Game {
         this.scene = null
         this.images = {}
         window.addEventListener('keydown', (e) => {
-            this.keyBoard.keydowns[e.key] = 'down'
+            this.keyBoard.keydowns[e.key.toLowerCase()] = 'down'
         })
         window.addEventListener('keyup', (e) => {
-            this.keyBoard.keydowns[e.key] = 'up'
+            this.keyBoard.keydowns[e.key.toLowerCase()] = 'up'
         })
         window.addEventListener('keyup', (e) => {
             if (e.key === ' ') {

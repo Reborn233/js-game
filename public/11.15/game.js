@@ -101,7 +101,6 @@ class Knight extends SpriteAnimation {
 
     update() {
         super.update()
-        this.speedX = this.speedX = config.PlayerSpeed
         if (this.cooling > 0) {
             this.cooling--
         }
