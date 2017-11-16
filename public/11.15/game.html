@@ -5,16 +5,18 @@
     <meta charset="UTF-8">
     <title>game</title>
     <style>
-        canvas {
-            border: 1px solid #ccc;
-        }
-        *{
-            margin: 0;
-            padding: 0;
-        }
-        .action{
-            height:50px;
-        }
+    canvas {
+        border: 1px solid #ccc;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .action {
+        height: 50px;
+    }
     </style>
 </head>
 
@@ -22,18 +24,23 @@
 </body>
 <div class="action">
     <label>
-        地图等级:<input type="range" data-config="config.BgLevel" class="set_params" min="1" max="5" value="1"/>
+        地图等级:
+        <input type="range" data-config="config.BgLevel" class="set_params" min="1" max="5" value="1" />
     </label>
     <label>
-        玩家速度:<input type="range" data-config="config.PlayerSpeed" class="set_params" max="20" value="7"/>
+        玩家速度:
+        <input type="range" data-config="config.PlayerSpeed" class="set_params" max="20" value="7" />
     </label>
     <label>
-        玩家子弹速度:<input type="range" data-config="config.PlayerBulletSpeed" class="set_params" max="20" value="7"/>
+        玩家子弹速度:
+        <input type="range" data-config="config.PlayerBulletSpeed" class="set_params" max="20" value="7" />
     </label>
     <label>
-        玩家子弹冷却:<input type="range" data-config="config.PlayerBulletCool" class="set_params" max="20" value="7"/>
+        玩家子弹冷却:
+        <input type="range" data-config="config.PlayerBulletCool" class="set_params" max="20" value="7" />
     </label>
 </div>
+
 </html>
 <script src="config.js"></script>
 <!--<script src="./images/texture.js"></script>-->
@@ -41,45 +48,51 @@
 <script src="main.js"></script>
 <script src="./game.js"></script>
 <script>
-    let inputs = document.querySelectorAll('.set_params')
-    inputs.forEach((input) => {
-        input.addEventListener('input', (e) => {
-            let val = e.target.value
-            let con = e.target.dataset.config
-            eval(con + '=' + val)
+if (document.all) {
+    document.onselectstart = function() { return false }
+} else {
+    document.onmousedown = function() { return false }
+    document.onmouseup = function() { return true }
+}
+document.onselectstart = new Function('event.returnValue=false')
 
-        })
+let inputs = document.querySelectorAll('.set_params')
+inputs.forEach((input) => {
+    input.addEventListener('input', (e) => {
+        let val = e.target.value
+        let con = e.target.dataset.config
+        eval(con + '=' + val)
+
     })
-    const game = new Game(512, 512, '#ccc', {
-        preload: preload,
-        start: start
-    })
+})
+const game = new Game(512, 512, '#ccc', {
+    preload: preload,
+    start: start
+})
 
-    //预加载资源
-    function preload() {
-        log('加载资源')
-        let img = {
-            //knight
-            idle1:'images/idle/knight1.png',
-            idle2:'images/idle/knight2.png',
-            idle3:'images/idle/knight3.png',
-            run1:'images/run/knight1.png',
-            run2:'images/run/knight2.png',
-            run3:'images/run/knight3.png',
-            bg:'images/bg/bg.png',
-            gun1:'images/gun1.png',
-            bullet1:'images/bullet2.png',
+//预加载资源
+function preload() {
+    log('加载资源')
+    let img = {
+        //knight
+        idle1: 'images/idle/knight1.png',
+        idle2: 'images/idle/knight2.png',
+        idle3: 'images/idle/knight3.png',
+        run1: 'images/run/knight1.png',
+        run2: 'images/run/knight2.png',
+        run3: 'images/run/knight3.png',
+        bg: 'images/bg/bg.png',
+        gun1: 'images/gun1.png',
+        bullet1: 'images/bullet2.png',
 
-        }
-        this.preloadImage(img)
     }
+    this.preloadImage(img)
+}
 
-    function start() {
-        log('start')
-        let s = SceneStart.new(game)
-//        let s = SceneMain.new(game)
-        this.runWithScene(s)
-    }
-
-
+function start() {
+    log('start')
+    let s = SceneStart.new(game)
+    //        let s = SceneMain.new(game)
+    this.runWithScene(s)
+}
 </script>

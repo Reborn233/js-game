@@ -42,7 +42,7 @@ class Knight extends SpriteAnimation {
         this.game = game
         this.animations = {
             idle: [],
-            run:[],
+            run: [],
         }
         game.loadAnimation(4, 'idle', this.animations['idle'])
         game.loadAnimation(4, 'run', this.animations['run'])
@@ -57,14 +57,14 @@ class Knight extends SpriteAnimation {
         this.cooling = 0
     }
 
-    fire(x, staX, y, staY) {
+    fire(hx, hy, s) {
         if (this.cooling === 0) {
             this.cooling = config.PlayerBulletCool
             let b = Bullet.new(this.game)
             b.x = this.flipX ? this.x : this.x + this.width
             b.y = this.y + this.height / 3
-            b.speedX = (x - staX) / b.speedX
-            b.speedY = (y - staY) / b.speedY
+            b.speedX = hx * 10 / s
+            b.speedY = -hy * 10 / s
             this.bullets.push(b)
         }
     }
@@ -165,8 +165,15 @@ class Bullet extends SpriteAnimation {
     update() {
         this.x += this.speedX
         this.y += this.speedY
-    }
 
+        if (this.x <= config.wall ||
+            this.x >= canvas.width - this.width - config.wall) {
+            this.speedX *= -1
+        } else if (this.y <= config.wall ||
+            this.y >= canvas.height - this.height - config.wall) {
+            this.speedY *= -1
+        }
+    }
 }
 
 //轨迹
@@ -243,8 +250,9 @@ class SceneStart extends Scene {
             this.p.flipY = true
         })
         canvas.addEventListener('mousemove', (e) => {
-            let x = e.clientX, y = e.clientY - 50
-            let angle = getAngle({x: x, y: y}, {
+            let x = e.clientX,
+                y = e.clientY - 50
+            let angle = getAngle({ x: x, y: y }, {
                 x: this.gun.x + this.gun.width / 2,
                 y: this.gun.y + this.gun.height / 2
             })
@@ -253,8 +261,9 @@ class SceneStart extends Scene {
         })
         canvas.addEventListener('mousedown', (e) => {
             if (e.which === 1) {
-                let x = e.clientX, y = e.clientY - 50
-                let angle = getAngle({x: x, y: y}, {
+                let x = e.clientX,
+                    y = e.clientY - 50
+                let angle = getAngle({ x: x, y: y }, {
                     x: this.gun.x + this.gun.width / 2,
                     y: this.gun.y + this.gun.height / 2
                 })
@@ -271,8 +280,10 @@ class SceneStart extends Scene {
                 //     endX: x,
                 //     endY: y,
                 // })
-                let k = (y - staY) / (x - staX)
-                this.p.fire(x, staX, y, staY)
+                let hx = x - x1
+                let hy = y1 - y
+                let s = Math.sqrt(Math.pow(hy,2) + Math.pow(hx,2))
+                this.p.fire(hx, hy, s)
             }
         })
     }
@@ -361,6 +372,5 @@ class SceneEnd extends Scene {
         g.drawText(this.title)
     }
 
-    update() {
-    }
+    update() {}
 }
