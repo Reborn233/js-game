@@ -98,6 +98,9 @@ class Knight extends SpriteAnimation {
     addEquip(obj) {
         this.equip.push(obj)
     }
+    remove(index){
+        this.bullets.splice(index,1)
+    }
 
     update() {
         super.update()
@@ -165,14 +168,6 @@ class Bullet extends SpriteAnimation {
     update() {
         this.x += this.speedX
         this.y += this.speedY
-
-        if (this.x <= config.wall ||
-            this.x >= canvas.width - this.width - config.wall) {
-            this.speedX *= -1
-        } else if (this.y <= config.wall ||
-            this.y >= canvas.height - this.height - config.wall) {
-            this.speedY *= -1
-        }
     }
 }
 
@@ -305,6 +300,10 @@ class SceneStart extends Scene {
         this.follow()
         this.p.bullets.forEach((b, i) => {
             b.update()
+            if(b.x<config.wall || b.x>canvas.width-b.width-config.wall ||
+                b.y<config.wall || b.y>canvas.height-b.height-config.wall){
+                this.p.remove(i)
+            }
         })
     }
 }
