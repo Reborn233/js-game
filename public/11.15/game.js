@@ -57,7 +57,7 @@ class Knight extends SpriteAnimation {
         this.cooling = 0
     }
 
-    fire(hx, hy, s) {
+    fire(hx, hy, s,staX,staY) {
         if (this.cooling === 0) {
             this.cooling = config.PlayerBulletCool
             let b = Bullet.new(this.game)
@@ -130,7 +130,7 @@ class Gun extends SpriteAnimation {
     draw() {
         ctx.save()
         let x = this.x
-        let y = this.y + this.height / 2 + 5
+        let y = this.y + this.height / 2
         if (this.flipX) {
             ctx.translate(x, 0)
             ctx.scale(-1, 1)
@@ -252,7 +252,7 @@ class SceneStart extends Scene {
                 y: this.gun.y + this.gun.height / 2
             })
             this.gun.angle = angle
-            this.p.flipX = this.gun.flipX = (x <= this.gun.x + this.gun.width / 2)
+            this.p.flipX = this.gun.flipX = (x <= this.p.x + this.p.width / 2)
         })
         canvas.addEventListener('mousedown', (e) => {
             if (e.which === 1) {
@@ -265,7 +265,7 @@ class SceneStart extends Scene {
                 let x1 = this.gun.x + this.gun.width,
                     y1 = this.gun.y + this.gun.height / 2,
                     rx0 = this.gun.x,
-                    ry0 = this.gun.y + this.gun.height / 2 + 5,
+                    ry0 = this.gun.y + this.gun.height / 2,
                     a = angle * Math.PI / 180,
                     staX = (x1 - rx0) * Math.cos(a) - (y1 - ry0) * Math.sin(a) + rx0,
                     staY = (x1 - rx0) * Math.sin(a) + (y1 - ry0) * Math.cos(a) + ry0
@@ -278,7 +278,7 @@ class SceneStart extends Scene {
                 let hx = x - x1
                 let hy = y1 - y
                 let s = Math.sqrt(Math.pow(hy,2) + Math.pow(hx,2))
-                this.p.fire(hx, hy, s)
+                this.p.fire(hx, hy, s,staX,staY)
             }
         })
     }

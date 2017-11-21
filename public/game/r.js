@@ -49,6 +49,10 @@ const loadImage = (obj) => {
     let num = Object.keys(obj).length
     return new Promise((resolve, reject) => {
         for (let key in obj) {
+            if(num === 0){
+                resolve(res)
+                return
+            }
             let img = new Image()
             img.src = obj[key]
             img.onload = () => {
